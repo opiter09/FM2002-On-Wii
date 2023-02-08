@@ -1,8 +1,15 @@
 def signed(num):
     if (num > 30000):
-        return(65536 - num)
+        return(num - 65536)
     else:
         return(num)
+
+def binarize(num):
+    binary = bin(num)[2:]
+    binList = [ bool(int(binary[x])) for x in range(len(binary)) ]
+    binList = binList.reversed()
+    binList = binList + [ False, False, False, False, False, False, False, False ]
+    return(binList)
 
 def unpack(section):
     itemTypeDict = { 0: "Header", 12: "Image", 1: "Move Frame", 25: "Defense Frame", 24: "Attack Frame", 23: "Reaction Frame", 3: "Sound",
@@ -31,10 +38,13 @@ def unpack(section):
         return({ "Wait Time": params[0], "X Position": signed(params[2]), "Y Position": signed(params[3]), "X Turn": x, "Y Turn": y,
             "Ignore Direction": bool(params[4]) })
     elif (itemType == "Move Frame"):
-        binary = bin(params[4])[2:]
-        binList = [ bool(int(binary[x])) for x in range(len(binary)) ]
-        binList = binList.reversed()
-        binList = binList + [ False, False, False, False, False ]
+        binList = binarize(params[4])
         return({ "X Move": signed(params[1]), "Y Move": signed(params[2]), "X Gravity": signed(params[0]), "Y Gravity": signed(params[3]),
             "Adds On": binList[0], "XM Stop": binList[1], "YM Stop": binList[2], "XG Stop": binList[3], "YG Stop": binList[4] })
+    elif (itemType == "Defense Frame"):
+        # top two are center x then y, bottom two are size x then y
+        binList = binarize(section[9])
+        return({ "X Center": signed(params[0]), "Y Center": signed(params[1]), "X Size": signed(params[2]), "Y Size": signed(params[3]),
+            "FD Slot": section[8], "Collision": binList[0], "Take Damage": binList[1], "Throwable": binList[2], "Damage Mult": params[5] })
+        
 
