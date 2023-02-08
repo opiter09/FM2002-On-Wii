@@ -1,5 +1,6 @@
 # FM2002-On-Wii
-This is a project to allow playing Fighter Maker 2002 games on the Wii. It makes use of WiiLove, which means I am recreating a game engine inside of a game engine.
+This is a project to allow playing Fighter Maker 2002 games on the Wii. It makes use of WiiLove, which means I am recreating a
+game engine inside of a game engine.
 
 CREDITS
 - All the people that figued out how to hack the Wii, made the Homebrew Channel, etc.
@@ -11,4 +12,9 @@ CREDITS
 - The PySimpleGUI team, for making that and PSGCompiler, so I can easily make a standalone application to unpack the game files
 - hlwz5735, for making the 2D Fighter Maker Explorer, a great resource on file formats (https://github.com/hlwz5735/2dfm-exporter)
 - Enterbrain, for making Fighter Maker 2002, and Alethila, for translating it
+
+DISCLAIMER
+This engine uses zero code from the original Fighter Maker 2002 exe, reverse-engineered or otherwise (mainly because I don't
+know how to do any of that). As such, not only is this not illegal, but all sorts of things may be implemented incorrectly. If
+you catch something like that, please let me know by creating an Issue.
 
