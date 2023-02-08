@@ -2,7 +2,7 @@
 This is a project to allow playing Fighter Maker 2002 games on the Wii. It makes use of WiiLove, which means I am recreating a game engine inside of a game engine.
 
 CREDITS
-- All the people that hacked the wii, made the Homebrew Channel, etc.
+- All the people that figued out how to hack the Wii, made the Homebrew Channel, etc.
 - The team behind Dolphin, which lets me test this
 - The team behind the original Love2D (https://love2d.org/)
 - Sheepolution, for their excellent primer on Love (https://www.sheepolution.com/learn/book/contents)
