@@ -40,11 +40,18 @@ def unpack(section):
     elif (itemType == "Move Frame"):
         binList = binarize(params[4])
         return({ "X Move": signed(params[1]), "Y Move": signed(params[2]), "X Gravity": signed(params[0]), "Y Gravity": signed(params[3]),
-            "Adds On": binList[0], "XM Stop": binList[1], "YM Stop": binList[2], "XG Stop": binList[3], "YG Stop": binList[4] })
+            "Adds On": binList[0], "XM Ignore": binList[1], "YM Ignore": binList[2], "XG Ignore": binList[3], "YG Ignore": binList[4] })
     elif (itemType == "Defense Frame"):
-        # top two are center x then y, bottom two are size x then y
-        binList = binarize(section[9])
+        binList = binarize(section[10])
         return({ "X Center": signed(params[0]), "Y Center": signed(params[1]), "X Size": signed(params[2]), "Y Size": signed(params[3]),
-            "FD Slot": section[8], "Collision": binList[0], "Take Damage": binList[1], "Throwable": binList[2], "Damage Mult": params[5] })
-        
+            "DF Slot": section[9], "Collision": binList[0], "Take Damage": binList[1], "Throwable": binList[2], "Damage Mult": params[5] })
+    elif (itemType == "Attack Frame"):
+        binList = binarize(section[10])
+        return({ "X Center": signed(params[0]), "Y Center": signed(params[1]), "X Size": signed(params[2]), "Y Size": signed(params[3]),
+            "AF Slot": section[9], "Cancellable": binList[0], "Continues Damage": binList[1], "Damages If Blocked": binList[2],
+            "Only Hits Blockers": binList[3], "Ignores On-Grounds": binList[4], "Ignores In-Airs": binList[5], "Unblockable": binList[6],
+            "Only Hits If Continuing": binList[7], "Power": section[12] })
+    elif (itemType == "Reaction Frame"):
+        return({ "Standing Hit": params[0], "Crouching Hit": params[1], "Aerial Hit": params[2], "Standing Guard": params[3],
+            "Crouching Guard": params[4], "Aerial Guard": params[5] })
 
