@@ -22,21 +22,27 @@ def unpack(section):
     if (itemType == "Header"):
         return({ "Skill Level": int.from_bytes(section[2:4], "little") })
     elif (itemType == "Image"):
+        image = section[3]
         if (section[4] >= 0x40) and (section[4] < 0x60):
             x = True
             y = False
+            image = image + ((section[4] - 0x40) * 256)
         elif (section[4] >= 0x80) and (section[4] < 0xA0):
             x = False
             y = True
+            image = image + ((section[4] - 0x80) * 256)
         elif (section[4] >= 0xC0) and (section[4] < 0xE0):
             x = True
             y = True
+            image = image + ((section[4] - 0xC0) * 256)
         else:
             x = False
             y = False
+            if (section[4] == 1):
+                image = image + 256
 
-        return({ "Wait Time": params[0], "X Position": signed(params[2]), "Y Position": signed(params[3]), "X Turn": x, "Y Turn": y,
-            "Ignore Direction": bool(params[4]) })
+        return({ "Image ID": image, "Wait Time": params[0], "X Position": signed(params[2]), "Y Position": signed(params[3]), "X Turn": x,
+            "Y Turn": y, "Ignore Direction": bool(params[4]) })
     elif (itemType == "Move Frame"):
         binList = binarize(params[4])
         return({ "X Move": signed(params[1]), "Y Move": signed(params[2]), "X Gravity": signed(params[0]), "Y Gravity": signed(params[3]),
@@ -54,4 +60,12 @@ def unpack(section):
     elif (itemType == "Reaction Frame"):
         return({ "Standing Hit": params[0], "Crouching Hit": params[1], "Aerial Hit": params[2], "Standing Guard": params[3],
             "Crouching Guard": params[4], "Aerial Guard": params[5] })
+    elif (itemType == "Sound"):
+        return({ "Sound ID": int.from_bytes(section[2:4], "little") })
+    elif (itemType == "Cancel Condition"):
+        timing = [ "Never", "By Hit", "Always" ]
+        if (section[1] <= 2):
+            return({ "Checks": "Level", "Available": timing[section[1]], "Level Minimum": section[2], "Level Maximum": section[5] })
+        else:
+            return({ "Checks": "Skill", "Available": timing[section[1] - 8], "Special Skill": params[1] })
 
