@@ -3,6 +3,12 @@ def signed(num):
         return(num - 65536)
     else:
         return(num)
+        
+def miniSigned(num):
+    if (num > 127):
+        return(num - 255)
+    else:
+        return(num)
 
 def binarize(num):
     binary = bin(num)[2:]
@@ -68,4 +74,8 @@ def unpack(section):
             return({ "Checks": "Level", "Available": timing[section[1]], "Level Minimum": section[2], "Level Maximum": section[5] })
         else:
             return({ "Checks": "Skill", "Available": timing[section[1] - 8], "Special Skill": params[1] })
+    elif (itemType == "Color Modification"):
+        choices = [ "Revert", "Add And Half Transparent", "Add Colors Weirdly", "Full Black", "Add And Choose Opacity" ]
+        return({ "Mode": choices[section[1]], "Red": miniSigned(section[2]) * (1 / 32), "Green": miniSigned(section[3]) * (1 / 32),
+        "Blue": miniSigned(section[4]) * (1 / 32), "Alpha Percent": section[5] * (1 / 32) })
 
