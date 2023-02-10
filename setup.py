@@ -1,6 +1,7 @@
 import PySimpleGUI as psg
 import os
 import shutil
+import json
 import itemData
 
 def unpackPlayer(fileName, outFolder, playerName):
