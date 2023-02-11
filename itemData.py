@@ -47,8 +47,8 @@ def unpack(section):
             if (section[4] == 1):
                 image = image + 256
 
-        return({ "Image ID": image, "Wait Time": params[0], "X Position": signed(params[2]), "Y Position": signed(params[3]), "X Turn": x,
-            "Y Turn": y, "Ignore Direction": bool(params[4]) })
+        return({ "Image ID": image, "Wait Time": params[0], "X Position": signed(params[2]), "Y Position": signed(params[3]), "X Flip Image": x,
+            "Y Flip Image": y, "Retain Direction": bool(params[4]) })
     elif (itemType == "Move Frame"):
         binList = binarize(params[4])
         return({ "X Move": signed(params[1]), "Y Move": signed(params[2]), "X Gravity": signed(params[0]), "Y Gravity": signed(params[3]),
@@ -78,4 +78,23 @@ def unpack(section):
         choices = [ "Revert", "Add And Half Transparent", "Add Colors Weirdly", "Full Black", "Add And Choose Opacity" ]
         return({ "Mode": choices[section[1]], "Red": miniSigned(section[2]) * (1 / 32), "Green": miniSigned(section[3]) * (1 / 32),
         "Blue": miniSigned(section[4]) * (1 / 32), "Alpha Percent": section[5] * (1 / 32) })
+    elif (itemType == "Object"):
+        binList = binarize(section[1])
+        if (binList[0] == False) and (binList[1] == False):
+            depth = "Behind"
+        elif (binList[0] == True) and (binList[1] == False):
+            depth = "In Front"
+        elif (binList[0] == False) and (binList[1] == True):
+            depth = "Chosen"
+
+        return({ "X Offset": signed(int.from_bytes(section[8:10], "little")), "Y Offset": signed(int.from_bytes(section[10:12], "little")),
+            "Object Skill": int.from_bytes(section[2:4], "little"), "Obj Slot": section[12], "Ignores Jump Skill": binList[2],
+            "Has Shadow": binList[3], "Only Moves With Parent": binList[5], "Uses Stage Coords": binList[6], "Depth": depth,
+            "Z Value": section[13], "Jump Skill for Parent": params[2], "Jump Skill Duration": section[7] })
+        # jump skill does not return to the original. this feature seems to basically not work, so I am going to implement it as it
+        # seems like it should work: the projectile runs its script on its own, and the player simultaneously performs the jump skill,
+        # then returns to default. the one thing I was able to actually figure out is that the "speed" value is actually how many items
+        # of the skill are resolved before it ends
+    elif (itemType == "Variable Fork"):
+        
 
