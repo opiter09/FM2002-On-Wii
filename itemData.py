@@ -40,7 +40,7 @@ def unpack(section):
         20: "Change Partner Skill", 16: "Special Guage Fork", 17: "Life Guage Fork", 21: "Change Guage", 14: "BG Scenery", 26: "Time Stop",
         37: "After Image", 5: "End Skill" }
     itemType = itemTypeDict[section[0]]
-    params = [int.from_bytes(section[x:(x + 1)], "little") for x in range(1, 16, 2)]
+    params = [int.from_bytes(section[x:(x + 2)], "little") for x in range(1, 16, 2)]
     if (itemType == "Header"):
         return({ "Skill Level": int.from_bytes(section[2:4], "little") })
     elif (itemType == "Image"):
@@ -104,9 +104,9 @@ def unpack(section):
             depth = "Chosen"
 
         return({ "X Offset": signed(int.from_bytes(section[8:10], "little")), "Y Offset": signed(int.from_bytes(section[10:12], "little")),
-            "Object Skill": int.from_bytes(section[2:4], "little"), "Obj Slot": section[12], "Ignores Jump Skill": binList[2],
-            "Has Shadow": binList[3], "Only Moves With Parent": binList[5], "Uses Stage Coords": binList[6], "Depth": depth,
-            "Z Value": section[13], "Jump Skill for Parent": params[2], "Jump Skill Duration": section[7] })
+            "Object Skill": int.from_bytes(section[2:4], "little"), "Object Skill Start": section[4], "Obj Slot": section[12],
+            "Ignores Jump Skill": binList[2], "Has Shadow": binList[3], "Only Moves With Parent": binList[5], "Uses Stage Coords": binList[6],
+            "Depth": depth, "Z Value": section[13], "Jump Skill for Parent": params[2], "Jump Skill Duration": section[7] })
         # jump skill does not return to the original. this feature seems to basically not work, so I am going to implement it as it
         # seems like it should work: the projectile runs its script on its own, and the player simultaneously performs the jump skill,
         # then returns to default. the one thing I was able to actually figure out is that the "speed" value is actually how many items
@@ -131,6 +131,19 @@ def unpack(section):
             branch = "If Lesser"
 
         return({ "Target Variable": variabled(section[4]), "Applied Constant": params[3], "Application Type": calc,
-            "Apply Variable Instead": binListA[7], "Applied Variable": variabled(section[6]), "Comparison Constant": params[4],
-            "Jump Condition": branch, "Jump Skill ID": params[0] })     
+            "Apply Variable Instead": binList[7], "Applied Variable": variabled(section[6]), "Comparison Constant": params[4],
+            "Jump Condition": branch, "Jump Skill ID": params[0], "Jump Skill Start": section[3] })
+    elif (itemType == "Detect Skill Fork"):
+        # all these only work if they happen to the opponent as a result of the move. makes sense, but good to know.
+        div = [ "Deactivated", "On Landing", "On Hit", "On Blocked Hit", "On Wall Collision", "On Non-Consecutive Hits", "On Throw" ]
+        return({ "Jump Condition": div[section[1]], "Jump Skill ID": int.from_bytes(section[2:4], "little"), "Jump Skill Start": section[4] })
+    elif (itemType == "Detect Condition Fork"):
+        # all these check what the user is doing, of course
+        div = [ "Deactivated", "If Holding Block", "If Holding Crouch", "If Holding Forwards", "If Holding Backwards", "If Holding Up",
+            "If Holding Down" ]
+        return({ "Jump Condition": div[section[7]], "Negate Condition": bool(section[1]), "Jump Skill ID": int.from_bytes(section[2:4], "little"),
+            "Jump Skill Start": section[4] })
+    elif (itemType == "Detect Random Fork"):
+        return({ "RandInt Max": params[0], "Minimum For Jump": params[1], "Jump Skill ID": int.from_bytes(section[6:8], "little"),
+            "Jump Skill Start": section[8] })
 
