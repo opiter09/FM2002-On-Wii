@@ -16,6 +16,22 @@ def binarize(num):
     binList = binList.reversed()
     binList = binList + [ False, False, False, False, False, False, False, False ]
     return(binList)
+    
+def variabled(num):
+    binList = binarize(num)
+    if (binList[6] == False) and (binList[7] == False):
+        beg = "Task"
+        return(beg + " " + char(ord("A") + num))
+    elif (binList[6] == True) and (binList[7] == False):
+        beg = "Char"
+        return(beg + " " + char(ord("A") + num - 0x40))
+    elif (binList[6] == False) and (binList[7] == True):
+        beg = "System"
+        return(beg + " " + char(ord("A") + num - 0x80))
+    elif (binList[6] == True) and (binList[7] == True):
+        beg = "Data"
+        names = [ "X Coord.", "Y Coord.", "Map X Coord.", "Map Y Coord.", "Parent X Coord.", "Parent Y Coord.", "Time", "Round Number" ]
+        return(beg + " " + names[num - 0xC0])
 
 def unpack(section):
     itemTypeDict = { 0: "Header", 12: "Image", 1: "Move Frame", 25: "Defense Frame", 24: "Attack Frame", 23: "Reaction Frame", 3: "Sound",
@@ -96,5 +112,25 @@ def unpack(section):
         # then returns to default. the one thing I was able to actually figure out is that the "speed" value is actually how many items
         # of the skill are resolved before it ends
     elif (itemType == "Variable Fork"):
-        
+        binList = binarize(section[5])
+        # number calculation options
+        if (binList[0] == False) and (binList[1] == False):
+            calc = "No Change"
+        elif (binList[0] == True) and (binList[1] == False):
+            calc = "Replace"
+        elif (binList[0] == False) and (binList[1] == True):
+            calc = "Add"
+        # condition branch options
+        if (binList[2] == False) and (binList[3] == False):
+            branch = "No Branch"
+        elif (binList[2] == True) and (binList[3] == False):
+            branch = "If Same"
+        elif (binList[2] == False) and (binList[3] == True):
+            branch = "If Greater"
+        elif (binList[2] == True) and (binList[3] == True):
+            branch = "If Lesser"
+
+        return({ "Target Variable": variabled(section[4]), "Applied Constant": params[3], "Application Type": calc,
+            "Apply Variable Instead": binListA[7], "Applied Variable": variabled(section[6]), "Comparison Constant": params[4],
+            "Jump Condition": branch, "Jump Skill ID": params[0] })     
 
