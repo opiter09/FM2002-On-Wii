@@ -64,7 +64,7 @@ def unpack(section):
                 image = image + 256
 
         return({ "Image ID": image, "Wait Time": params[0], "X Position": signed(params[2]), "Y Position": signed(params[3]), "X Flip Image": x,
-            "Y Flip Image": y, "Retain Direction": bool(params[4]) })
+            "Y Flip Image": y, "Immutable Direction": bool(params[4]) })
     elif (itemType == "Move Frame"):
         binList = binarize(params[4])
         return({ "X Move": signed(params[1]), "Y Move": signed(params[2]), "X Gravity": signed(params[0]), "Y Gravity": signed(params[3]),
@@ -169,4 +169,23 @@ def unpack(section):
             inputs.append([ relation, theDir, buttons ])           
         return({ "Time Limit": section[4], "Jump Skill ID": params[0], "Jump Skill Start": section[3], "input1": inputs[0], "input2": inputs[1],
             "input3": inputs[2], "input4": inputs[3], "input5": inputs[4] })
-
+    elif (itemType == "Go To Skill"):
+        # goes to skill, then reverts to default
+        return({ "Jump Skill ID": params[0], "Jump Skill Start": section[3] })
+    elif (itemType == "Call Skill"):
+        # goes to skill, then picks up where it left off in the old skill (like a function)
+        return({ "Jump Skill ID": params[0], "Jump Skill Start": section[3] })
+    elif (itemType == "Loop Skill"):
+        # loops X times, then picks up where it left off in the old skill (like a function)
+        return({ "Loop Count": section[1], "Jump Skill ID": int.from_bytes(section[2:4], "little"), "Jump Skill Start": section[4] })
+    elif (itemType == "Change Partner Place"):
+        binList = binarize(section[1])
+        # coordinates refer to the top left of the opponent's image. presumably this is also true for objects.
+        return({ "Partner X": signed(int.from_bytes(section[4:6], "little"), "Partner Y": signed(int.from_bytes(section[6:8], "little")),
+            "Partner Common Image": int.from_bytes(section[2:4], "little"), "Partner In Back": binList[0], "X Flip Target": binList[2],
+            "Y Flip Target": binList[3], "Same???": binList[4] })
+    elif (itemType == "Change Partner Skill"):
+        # reaction values are from the reaction table, NOT the overall skill ID
+        binList = binarize(section[1])
+        return({ "Partner X": signed(int.from_bytes(section[4:6], "little"), "Partner Y": signed(int.from_bytes(section[6:8], "little")),
+            "Partner Reaction ID": int.from_bytes(section[2:4], "little"), "Partner In Back": binList[0], "X Flip Target": binList[2] })
