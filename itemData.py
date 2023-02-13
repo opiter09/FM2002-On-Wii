@@ -14,7 +14,7 @@ def binarize(num):
     binary = bin(num)[2:]
     binList = [ bool(int(binary[x])) for x in range(len(binary)) ]
     binList = binList.reversed()
-    binList = binList + [ False, False, False, False, False, False, False, False ]
+    binList = binList + ([False] * 16)
     return(binList)
     
 def variabled(num):
@@ -146,4 +146,27 @@ def unpack(section):
     elif (itemType == "Detect Random Fork"):
         return({ "RandInt Max": params[0], "Minimum For Jump": params[1], "Jump Skill ID": int.from_bytes(section[6:8], "little"),
             "Jump Skill Start": section[8] })
+    elif (itemType == "Detect Command Input Fork"):
+        inputs = []
+        for i in range(5):
+            binList = binarize(params[i + 2])
+            buttons = [ "A", "B", "C", "D", "E", "F" ]
+            for j in range(4, 10):
+                if (binList[j] == False):
+                    buttons.remove(buttons[j])
+
+            # remember to flip when facing left
+            directions = [ "Any", "None", "E", "SE", "S", "SW", "W", "NW", "N", "NE", "Anything W", "Anything N", "Anything E", "Anything S" ]
+            theDir = directions[int("0b" + binList[0:4].reversed(), 2)]
+
+            if (binList[12] == False) and (binList[13] == False):
+                relation = "Unused"
+            elif (binList[12] == False) and (binList[13] == True):
+                relation = "End"
+            elif (binList[12] == True) and (binList[13] == True):
+                relation = "Continue"
+            
+            inputs.append([ relation, theDir, buttons ])           
+        return({ "Time Limit": section[4], "Jump Skill ID": params[0], "Jump Skill Start": section[3], "input1": inputs[0], "input2": inputs[1],
+            "input3": inputs[2], "input4": inputs[3], "input5": inputs[4] })
 
