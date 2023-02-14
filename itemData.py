@@ -200,7 +200,15 @@ def unpack(section):
         "User Special Change": signed(int.from_bytes(section[4:6], "little")), "Target Life Change": signed(int.from_bytes(section[6:8], "little")),
         "Target Special Change": signed(int.from_bytes(section[8:10], "little")) })
     elif (itemType == "BG Scenery"):
-        return({ })
+        binList = binarize(section[8])
+        pals = [ "None", "Fade", "Blink", "Random" ]
+        shakes = [ "None", "Decreasing", "Increasing", "Fixed", "Random" ]
+        return({ "Palette Fade Type": pals[section[1]], "Palette Fade Duration": int.from_bytes(section[6:8], "little") / 100,
+            "Affects User": binList[0], "Affects Opponent": binList[1], "Affects Stage": binList[2], "Affects System Event": binList[3],
+            "Red": miniSigned(section[2]) * (1 / 32), "Blue": miniSigned(section[3]) * (1 / 32),
+            "Green": miniSigned(section[4]) * (1 / 32), "Alpha Percent": miniSigned(section[5])* (1 / 32)
+            "X Shake Type": shakes[section[9]], "X Shake Duration": section[11] / 100, "X Shake Intensity": section[10],
+            "Y Shake Type": shakes[section[12]], "Y Shake Duration": section[14] / 100, "Y Shake Intensity": section[13] })
     elif (itemType == "Time Stop"):
         return({ "User Stop Duration": section[1] / 100, "Target Stop Duration": section[2] / 100 })
     elif (itemType == "After Image"):
