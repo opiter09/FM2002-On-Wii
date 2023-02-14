@@ -37,7 +37,7 @@ def unpack(section):
     itemTypeDict = { 0: "Header", 12: "Image", 1: "Move Frame", 25: "Defense Frame", 24: "Attack Frame", 23: "Reaction Frame", 3: "Sound",
         30: "Cancel Condition", 35: "Color Modification", 4: "Object", 31: "Variable Fork", 2: "Detect Skill Fork", 22: "Detect Condition Fork",
         32: "Detect Random Fork", 36: "Detect Command Input Fork", 10: "Go To Skill", 11: "Call Skill", 9: "Loop Skill", 7: "Change Partner Place",
-        20: "Change Partner Skill", 16: "Special Guage Fork", 17: "Life Guage Fork", 21: "Change Guage", 14: "BG Scenery", 26: "Time Stop",
+        20: "Change Partner Skill", 16: "Special Gauge Fork", 17: "Life Gauge Fork", 21: "Change Gauge", 14: "BG Scenery", 26: "Time Stop",
         37: "After Image", 5: "End Skill" }
     itemType = itemTypeDict[section[0]]
     params = [int.from_bytes(section[x:(x + 2)], "little") for x in range(1, 16, 2)]
@@ -63,8 +63,8 @@ def unpack(section):
             if (section[4] == 1):
                 image = image + 256
 
-        return({ "Image ID": image, "Wait Time": params[0], "X Position": signed(params[2]), "Y Position": signed(params[3]), "X Flip Image": x,
-            "Y Flip Image": y, "Immutable Direction": bool(params[4]) })
+        return({ "Image ID": image, "Wait Time": params[0] / 100, "X Position": signed(params[2]), "Y Position": signed(params[3]),
+            "X Flip Image": x, "Y Flip Image": y, "Immutable Direction": bool(params[4]) })
     elif (itemType == "Move Frame"):
         binList = binarize(params[4])
         return({ "X Move": signed(params[1]), "Y Move": signed(params[2]), "X Gravity": signed(params[0]), "Y Gravity": signed(params[3]),
@@ -189,3 +189,26 @@ def unpack(section):
         binList = binarize(section[1])
         return({ "Partner X": signed(int.from_bytes(section[4:6], "little"), "Partner Y": signed(int.from_bytes(section[6:8], "little")),
             "Partner Reaction ID": int.from_bytes(section[2:4], "little"), "Partner In Back": binList[0], "X Flip Target": binList[2] })
+    elif (itemType == "Special Gauge Fork"):
+        return({ "Bars Count": section[6], "Check If Value Is Greater Instead": bool(section[5]), "Success Change Amount": signed(params[3]),
+            "Fail Jump Skill": int.from_bytes(section[2:4], "little"), "Fail Jump Skill Start": section[4] })
+    elif (itemType == "Life Gauge Fork"):
+        return({ "Life Count": section[6], "Check If Value Is Greater Instead": bool(section[5]),
+            "Fail Jump Skill": int.from_bytes(section[2:4], "little"), "Fail Jump Skill Start": section[4] })
+    elif (itemType == "Change Gauge"):
+        return({ "User Life Change": signed(int.from_bytes(section[2:4], "little")),
+        "User Special Change": signed(int.from_bytes(section[4:6], "little")), "Target Life Change": signed(int.from_bytes(section[6:8], "little")),
+        "Target Special Change": signed(int.from_bytes(section[8:10], "little")) })
+    elif (itemType == "BG Scenery"):
+        return({ })
+    elif (itemType == "Time Stop"):
+        return({ "User Stop Duration": section[1] / 100, "Target Stop Duration": section[2] / 100 })
+    elif (itemType == "After Image"):
+        # this setting is very weird in that it keeps going after the move is over. it will continue making "after images" (sprites showing your
+        # last X frames) until another AI deactivates it. during that time, images last for the Duration, and only X can exist at a time, with
+        # possible new ones simply not showing up if there are too many out.
+        choices = [ "Revert", "Add And Half Transparent", "Add Colors Weirdly", "Full Black", "Add And Choose Opacity" ]
+        choices2 = [ "Deactivated", "None", "Fade", "Blink", "Random" ]
+        return({ "Image Count": section[3], "Image Duration": section[4] / 100, "Color Mode": choices[section[5]],
+            "Fading Mode": choices2[section[6]], "Red": miniSigned(section[7]) * (1 / 32), "Blue": miniSigned(section[8]) * (1 / 32),
+            "Green": miniSigned(section[9]) * (1 / 32), "Alpha Percent": miniSigned(section[10])* (1 / 32) })
