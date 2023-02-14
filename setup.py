@@ -9,17 +9,17 @@ def unpackPlayer(fileName, outFolder, playerName):
     reading = opening.read()
     opening.close()
     
-    ourDict = {"scripts" = {}}
+    ourDict = {"scripts": {}}
     scriptNum = int.from_bytes(reading[0x110:0x114], "little")
     itemSeps = []
-    scripNameList = []
-    for i in range(len(scriptNum)):
+    scriptNameList = []
+    for i in range(scriptNum):
         section = reading[(0x114 + (i * 39)):(0x114 + ((i + 1) * 39))]
         itemSeps.append(int.from_bytes(section[32:34], "little"))
-    for i in range(len(scriptNum)):
+    for i in range(scriptNum):
         section = reading[(0x114 + (i * 39)):(0x114 + ((i + 1) * 39))]
         name = section[0:32].decode("UTF-8", errors = "ignore").split("\0")[0]
-        scripNameList.append(name)
+        scriptNameList.append(name)
         ourDict["scripts"][name] = []
         if (section[35] == 1):
             ourDict["defaultScript"] = name
@@ -27,16 +27,20 @@ def unpackPlayer(fileName, outFolder, playerName):
 
     itemNum = int.from_bytes(reading[(0x114 + (scriptNum * 39)):(0x114 + (scriptNum * 39) + 4)], "little")
     itemStart = 0x114 + (scriptNum * 39) + 4
-    for i in range(len(itemNum)):
+    for i in range(itemNum):
         for j in range(len(itemSeps)):
             if (i == 0):
-                currentName = scripNameList[0]
+                currentName = scriptNameList[0]
                 break
             elif (i < itemSeps[j]):
-                currentName = scripNameList[j - 1]
+                currentName = scriptNameList[j - 1]
                 break
         section = reading[(itemStart + (i * 16)):(itemStart + ((i + 1) * 16))]
         ourDict["scripts"][currentName].append(itemData.unpack(section))
+        
+        newFile = open(outFolder + "playerData.json", "wt")
+        json.dump(ourDict, newFile, indent = "\t")
+        newFile.close()
         
     
 layout = [
@@ -64,8 +68,10 @@ while True:
         continue
     elif (event == "Run"):
         folder = "apps/fm2k2player/data/" + values["button"] + " Button/"
-        shutil.rmtree(folder)
+        if (os.path.isdir(folder) == True):
+            shutil.rmtree(folder)
         os.mkdir(folder)
+        os.mkdir(folder + "Players/")
         name = open(folder + "name.txt", "wt")
         name.write(values["data"].split("/")[-1])
         name.close()
@@ -73,7 +79,9 @@ while True:
             for file in files:
                 if (file.endswith(".player") == True):
                     os.mkdir(folder + "Players/" + file[0:-7])
-                    unpackPlayer(os.path.join(root, file), folder + "Players/" + file[0:-7], file[0:-7])
+                    unpackPlayer(os.path.join(root, file), folder + "Players/" + file[0:-7] + "/", file[0:-7])
+        psg.popup("Finished!")
+        window.close()
 
 # Finish up by removing from the screen
 window.close()
