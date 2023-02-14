@@ -209,6 +209,12 @@ def unpack(section):
             "Green": miniSigned(section[4]) * (1 / 32), "Alpha Percent": miniSigned(section[5])* (1 / 32)
             "X Shake Type": shakes[section[9]], "X Shake Duration": section[11] / 100, "X Shake Intensity": section[10],
             "Y Shake Type": shakes[section[12]], "Y Shake Duration": section[14] / 100, "Y Shake Intensity": section[13] })
+       # for smooth fading, duration is how long it takes to get to full; it stays on until you turn it off. for blinking, it stops blinking after
+       # the duration. also, what it fades to is determined by the color values--basically it adds and adds until it gets to what you put in.
+       # for shaking, you either increase from 0 to the intensity, or decrease from the intensity to 0. it ends all on its own, thank god.
+       # I think intensity is based on distance, not time. Testing shows that it shifts the image, then immediately shifts it back, every 10th
+       # of a second. It seems to alternate up/down and left/right (in that order). based on essentially one test, intensity seems to be the
+       # number of pixels shifted.
     elif (itemType == "Time Stop"):
         return({ "User Stop Duration": section[1] / 100, "Target Stop Duration": section[2] / 100 })
     elif (itemType == "After Image"):
