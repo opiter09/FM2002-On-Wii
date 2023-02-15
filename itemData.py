@@ -95,7 +95,7 @@ def unpack(section):
     elif (itemType == "Color Modification"):
         choices = [ "Revert", "Add And Half Transparent", "Add Colors Weirdly", "Full Black", "Add And Choose Opacity" ]
         return({ "type": itemType, "Mode": choices[section[1]], "Red": miniSigned(section[2]) * (1 / 32), "Green": miniSigned(section[3]) * (1 / 32),
-        "Blue": miniSigned(section[4]) * (1 / 32), "Alpha Percent": section[5] * (1 / 32) })
+        "Blue": miniSigned(section[4]) * (1 / 32), "Alpha Ratio": section[5] * (1 / 32) })
     elif (itemType == "Object"):
         binList = binarize(section[1])
         if (binList[0] == False) and (binList[1] == False):
@@ -143,8 +143,8 @@ def unpack(section):
             "Jump Skill Start": section[4] })
     elif (itemType == "Detect Condition Fork"):
         # all these check what the user is doing, of course
-        div = [ "Deactivated", "If Holding Block", "If Holding Crouch", "If Holding Forwards", "If Holding Backwards", "If Holding Up",
-            "If Holding Down" ]
+        div = [ "Deactivated", "If Holding Block", "If Standing", "If Holding Crouch", "If Holding Forwards", "If Holding Backwards",
+            "If Holding Up", "If Holding Down" ]
         return({ "type": itemType, "Jump Condition": div[section[7]], "Negate Condition": bool(section[1]),
             "Jump Skill ID": int.from_bytes(section[2:4], "little"), "Jump Skill Start": section[4] })
     elif (itemType == "Detect Random Fork"):
@@ -162,7 +162,7 @@ def unpack(section):
 
             # remember to flip when facing left
             directions = [ "Any", "None", "E", "SE", "S", "SW", "W", "NW", "N", "NE", "Anything W", "Anything N", "Anything E", "Anything S" ]
-            theDir = directions[int(bin(params[i + 2])[0:6], 2)]
+            theDir = directions[int("0b" + bin(params[i + 2])[-4:], 2)]
 
             if (binList[12] == False) and (binList[13] == False):
                 relation = "Unused"
@@ -196,10 +196,10 @@ def unpack(section):
             "Partner Y": signed(int.from_bytes(section[6:8], "little")), "Partner Reaction ID": int.from_bytes(section[2:4], "little"),
             "Partner In Back": binList[0], "X Flip Target": binList[2] })
     elif (itemType == "Special Gauge Fork"):
-        return({ "type": itemType, "Bars Count": section[6], "Check If Value Is Greater Instead": bool(section[5]),
+        return({ "type": itemType, "Bars Count": section[6], "Check If User Has Less Instead": bool(section[5]),
             "Success Change Amount": signed(params[3]), "Fail Jump Skill": int.from_bytes(section[2:4], "little"), "Fail Jump Skill Start": section[4] })
     elif (itemType == "Life Gauge Fork"):
-        return({ "type": itemType, "Life Count": section[6], "Check If Value Is Greater Instead": bool(section[5]),
+        return({ "type": itemType, "Life Count": section[6], "Check If User Has Less Instead": bool(section[5]),
             "Fail Jump Skill": int.from_bytes(section[2:4], "little"), "Fail Jump Skill Start": section[4] })
     elif (itemType == "Change Gauge"):
         return({ "type": itemType, "User Life Change": signed(int.from_bytes(section[2:4], "little")),
@@ -212,7 +212,7 @@ def unpack(section):
         return({ "type": itemType, "Palette Fade Type": pals[section[1]], "Palette Fade Duration": int.from_bytes(section[6:8], "little") / 100,
             "Affects User": binList[0], "Affects Opponent": binList[1], "Affects Stage": binList[2], "Affects System Event": binList[3],
             "Red": miniSigned(section[2]) * (1 / 32), "Blue": miniSigned(section[3]) * (1 / 32),
-            "Green": miniSigned(section[4]) * (1 / 32), "Alpha Percent": miniSigned(section[5])* (1 / 32),
+            "Green": miniSigned(section[4]) * (1 / 32), "Alpha Ratio": miniSigned(section[5])* (1 / 32),
             "X Shake Type": shakes[section[9]], "X Shake Duration": section[11] / 100, "X Shake Intensity": section[10],
             "Y Shake Type": shakes[section[12]], "Y Shake Duration": section[14] / 100, "Y Shake Intensity": section[13] })
        # for smooth fading, duration is how long it takes to get to full; it stays on until you turn it off. for blinking, it stops blinking after
@@ -231,4 +231,6 @@ def unpack(section):
         choices2 = [ "Deactivated", "None", "Fade", "Blink", "Random" ]
         return({ "type": itemType, "Image Count": section[3], "Image Duration": section[4] / 100, "Color Mode": choices[section[5]],
             "Fading Mode": choices2[section[6]], "Red": miniSigned(section[7]) * (1 / 32), "Blue": miniSigned(section[8]) * (1 / 32),
-            "Green": miniSigned(section[9]) * (1 / 32), "Alpha Percent": miniSigned(section[10])* (1 / 32) })
+            "Green": miniSigned(section[9]) * (1 / 32), "Alpha Ratio": miniSigned(section[10])* (1 / 32) })
+    elif (itemType == "End Skill"):
+        return({ "type": itemType })
