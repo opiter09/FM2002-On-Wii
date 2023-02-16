@@ -5,56 +5,7 @@ import subprocess
 from PIL import Image
 import json
 import itemData
-
-def transparency(inputFile, color):
-    img = Image.open(inputFile)
-    img = img.convert("RGBA")
-    pixdata = img.load()
-    width, height = img.size
-    for y in range(height):
-        for x in range(width):
-            if pixdata[x, y] == (color[0], color[1], color[2], 255):
-                pixdata[x, y] = (color[0], color[1], color[2], 0)
-    img.save(inputFile, "PNG")
-
-def unpackPlayer(fileName, outFolder, playerName):
-    opening = open(fileName, "rb")
-    reading = opening.read()
-    opening.close()
-    
-    ourDict = {"scripts": {}}
-    scriptNum = int.from_bytes(reading[0x110:0x114], "little")
-    itemSeps = []
-    scriptNameList = []
-    for i in range(scriptNum):
-        section = reading[(0x114 + (i * 39)):(0x114 + ((i + 1) * 39))]
-        itemSeps.append(int.from_bytes(section[32:34], "little"))
-    for i in range(scriptNum):
-        section = reading[(0x114 + (i * 39)):(0x114 + ((i + 1) * 39))]
-        name = section[0:32].decode("UTF-8", errors = "ignore").split("\0")[0]
-        scriptNameList.append(name)
-        ourDict["scripts"][name] = []
-        if (section[35] == 1):
-            ourDict["defaultScript"] = name
-    ourDict["orderedScripts"] = scriptNameList
-
-    itemNum = int.from_bytes(reading[(0x114 + (scriptNum * 39)):(0x114 + (scriptNum * 39) + 4)], "little")
-    itemStart = 0x114 + (scriptNum * 39) + 4
-    for i in range(itemNum):
-        for j in range(len(itemSeps)):
-            if (i == 0):
-                currentName = scriptNameList[0]
-                break
-            elif (i < itemSeps[j]):
-                currentName = scriptNameList[j - 1]
-                break
-        section = reading[(itemStart + (i * 16)):(itemStart + ((i + 1) * 16))]
-        ourDict["scripts"][currentName].append(itemData.unpack(section))
-        
-        newFile = open(outFolder + "playerData.json", "wt")
-        json.dump(ourDict, newFile, indent = "\t")
-        newFile.close()
-        
+import playerUnpack       
     
 layout = [
     [ psg.Text("Built Game Folder"), psg.Input("", key = "data"), psg.FolderBrowse() ],
@@ -103,7 +54,7 @@ while True:
                         for thing in f:
                             shutil.copyfile(values["data"] + file[0:-7] + "/" + thing, folder + "Players/" + file[0:-7] + "/Images/" + thing)
                     shutil.rmtree(values["data"] + file[0:-7])
-                    unpackPlayer(os.path.join(root, file), folder + "Players/" + file[0:-7] + "/", file[0:-7])
+                    playerUnpack.unpack(os.path.join(root, file), folder + "Players/" + file[0:-7] + "/", file[0:-7])
         psg.popup("Finished!")
         break
 
