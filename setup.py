@@ -1,8 +1,21 @@
 import PySimpleGUI as psg
 import os
 import shutil
+import subprocess
+from PIL import Image
 import json
 import itemData
+
+def transparency(inputFile, color):
+    img = Image.open(inputFile)
+    img = img.convert("RGBA")
+    pixdata = img.load()
+    width, height = img.size
+    for y in range(height):
+        for x in range(width):
+            if pixdata[x, y] == (color[0], color[1], color[2], 255):
+                pixdata[x, y] = (color[0], color[1], color[2], 0)
+    img.save(inputFile, "PNG")
 
 def unpackPlayer(fileName, outFolder, playerName):
     opening = open(fileName, "rb")
@@ -67,6 +80,10 @@ while True:
     elif (values["data"] == None) or (values["root"] == None) or (values["button"] == None):
         continue
     elif (event == "Run"):
+        shutil.copyfile("FM2Kunlock.exe", values["data"] + "FM2Kunlock.exe")
+        subprocess.run([ values["data"] + "FM2Kunlock.exe" ])
+        shutil.copyfile("sprite_sound_ripper.exe", values["data"] + "sprite_sound_ripper.exe")
+
         folder = "apps/fm2k2player/data/" + values["button"] + " Button/"
         if (os.path.isdir(folder) == True):
             shutil.rmtree(folder)
@@ -79,9 +96,16 @@ while True:
             for file in files:
                 if (file.endswith(".player") == True):
                     os.mkdir(folder + "Players/" + file[0:-7])
+                    subprocess.run([ values["data"] + "sprite_sound_ripper.exe", os.path.join(root, file) ])
+                    shutil.copytree(values["data"] + file[0:-7] + "/" + "snd", folder + "Players/" + file[0:-7] + "/Sounds")
+                    os.mkdir(folder + "Players/" + file[0:-7] + "/Images")
+                    for r, d, f in os.walk(values["data"] + file[0:-7]):
+                        for thing in f:
+                            shutil.copyfile(values["data"] + file[0:-7] + "/" + thing, folder + "Players/" + file[0:-7] + "/Images/" + thing)
+                    shutil.rmtree(values["data"] + file[0:-7])
                     unpackPlayer(os.path.join(root, file), folder + "Players/" + file[0:-7] + "/", file[0:-7])
         psg.popup("Finished!")
-        window.close()
+        break
 
 # Finish up by removing from the screen
 window.close()

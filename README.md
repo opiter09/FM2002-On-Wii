@@ -12,7 +12,8 @@ game engine inside of a game engine.
   which allows for the importing of data in json files (https://github.com/rxi/json.lua)
 - The PySimpleGUI team, for making that and PSGCompiler, so I can easily make a standalone application to unpack the game files
 - hlwz5735, for making the 2D Fighter Maker Explorer, a great resource on file formats (https://github.com/hlwz5735/2dfm-exporter)
-- Enterbrain, for making Fighter Maker 2002, and Alethila, for translating it
+- Alethila, for making FM2Kunlock.exe, and for saving me immense amounts of time by making sprite_sound_ripper.exe
+- Enterbrain, for making Fighter Maker 2002, and Alethila again, for translating it
 
 # Disclaimer
 This engine uses zero code from the original Fighter Maker 2002 exe, reverse-engineered or otherwise (mainly because I don't
