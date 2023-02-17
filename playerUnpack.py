@@ -14,7 +14,7 @@ def transparency(inputFile):
     for y in range(height):
         for x in range(width):
             if (pixdata[x, y] == color):
-                pixdata[x, y] = (color[0], color[1], color[2], 0)
+                pixdata[x, y] = (255, 255, 255, 0)
     img.save(inputFile, "PNG")
 
 def unpack(fileName, outFolder, playerName):

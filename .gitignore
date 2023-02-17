@@ -1,4 +1,4 @@
 
 *.pyc
 *.json
-*.txt
+*name.txt
