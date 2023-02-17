@@ -162,7 +162,10 @@ def unpack(section):
 
             # remember to flip when facing left
             directions = [ "Any", "None", "E", "SE", "S", "SW", "W", "NW", "N", "NE", "Anything W", "Anything N", "Anything E", "Anything S" ]
-            theDir = directions[int("0b" + bin(params[i + 2])[-4:], 2)]
+            if (len(bin(params[i + 2])) >= 6):
+                theDir = directions[int("0b" + bin(params[i + 2])[-4:], 2)]
+            else:
+                theDir = directions[params[i + 2]]
 
             if (binList[12] == False) and (binList[13] == False):
                 relation = "Unused"

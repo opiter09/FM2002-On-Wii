@@ -2,3 +2,5 @@
 *.pyc
 *.json
 *name.txt
+*.png
+*.wav

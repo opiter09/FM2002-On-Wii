@@ -31,6 +31,11 @@ while True:
     elif (values["data"] == None) or (values["root"] == None) or (values["button"] == None):
         continue
     elif (event == "Run"):
+        if (values["data"][-1] != "/"):
+            values["data"] = values["data"] + "/"
+        if (values["root"][-1] != "/"):
+            values["root"] = values["root"] + "/"
+
         shutil.copyfile("FM2Kunlock.exe", values["data"] + "FM2Kunlock.exe")
         subprocess.run([ values["data"] + "FM2Kunlock.exe" ])
         shutil.copyfile("sprite_sound_ripper.exe", values["data"] + "sprite_sound_ripper.exe")
@@ -47,14 +52,18 @@ while True:
             for file in files:
                 if (file.endswith(".player") == True):
                     os.mkdir(folder + "Players/" + file[0:-7])
-                    subprocess.run([ values["data"] + "sprite_sound_ripper.exe", os.path.join(root, file) ])
-                    shutil.copytree(values["data"] + file[0:-7] + "/" + "snd", folder + "Players/" + file[0:-7] + "/Sounds")
+                    subprocess.run([ "sprite_sound_ripper.exe", file ], cwd = values["data"])
                     os.mkdir(folder + "Players/" + file[0:-7] + "/Images")
-                    for r, d, f in os.walk(values["data"] + file[0:-7]):
+                    os.mkdir(folder + "Players/" + file[0:-7] + "/Sounds")
+                    for r, d, f in os.walk(file[0:-7]):
                         for thing in f:
-                            shutil.copyfile(values["data"] + file[0:-7] + "/" + thing, folder + "Players/" + file[0:-7] + "/Images/" + thing)
-                    shutil.rmtree(values["data"] + file[0:-7])
+                            if (os.path.join(r, thing).split("\\")[1] == thing):
+                                shutil.copyfile(file[0:-7] + "/" + thing, folder + "Players/" + file[0:-7] + "/Images/" + thing)
+                            elif (os.path.join(r, thing).split("\\")[1] == "snd"):
+                                shutil.copyfile(file[0:-7] + "/snd/" + thing, folder + "Players/" + file[0:-7] + "/Sounds/" + thing)
+                    shutil.rmtree(file[0:-7])
                     playerUnpack.unpack(os.path.join(root, file), folder + "Players/" + file[0:-7] + "/", file[0:-7])
+                    break
         psg.popup("Finished!")
         break
 
