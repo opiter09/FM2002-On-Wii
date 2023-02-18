@@ -63,7 +63,7 @@ while True:
                                 shutil.copyfile(file[0:-7] + "/snd/" + thing, folder + "Players/" + file[0:-7] + "/Sounds/" + thing)
                     shutil.rmtree(file[0:-7])
                     playerUnpack.unpack(os.path.join(root, file), folder + "Players/" + file[0:-7] + "/", file[0:-7])
-                    break
+
         psg.popup("Finished!")
         break
 
