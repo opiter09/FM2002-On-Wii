@@ -83,7 +83,7 @@ def unpack(fileName, outFolder, playerName):
     soundStart = offset + (8 * 1056) + 4
     offset2 = soundStart
     for i in range(soundNum):
-        size = reading[offset2 + 36]
+        size = int.from_bytes(reading[(offset2 + 36):(offset2 + 40)], "little")
         offset2 = offset2 + 42 + size
 
     newFile = open(outFolder + "playerData.json", "wt")
