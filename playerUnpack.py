@@ -85,8 +85,7 @@ def unpack(fileName, outFolder, playerName):
     for i in range(soundNum):
         size = reading[offset2 + 36]
         offset2 = offset2 + 42 + size
-    
-    print(playerName + ": " + str(offset2))
+
     newFile = open(outFolder + "playerData.json", "wt")
     json.dump(ourDict, newFile, indent = "\t")
     newFile.close()
