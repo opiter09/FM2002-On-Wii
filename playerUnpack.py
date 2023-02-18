@@ -56,12 +56,12 @@ def unpack(fileName, outFolder, playerName):
     offset = imageStart
     count = -1
     for i in range(imageNum):
-        width = reading[offset + 4]
-        height = reading[offset + 8]
-        size = reading[offset + 16]
+        width = int.from_bytes(reading[(offset + 4):(offset + 8)], "little")
+        height = int.from_bytes(reading[(offset + 8):(offset + 12)], "little")
+        size = int.from_bytes(reading[(offset + 16):(offset + 20)], "little")
         private = bool(reading[offset + 12])
         offset = offset + 20
-        if (size != 0) or (width != 0) or (length != 0):
+        if (size != 0) or (width != 0) or (height != 0):
             count = count + 1
             if (os.path.exists(outFolder + "Images/" + str(count).zfill(4) + ".png") == True):
                 os.rename(outFolder + "Images/" + str(count).zfill(4) + ".png", outFolder + "Images/" + "new_" + str(i).zfill(4) + ".png")
