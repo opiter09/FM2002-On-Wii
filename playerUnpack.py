@@ -143,7 +143,16 @@ def unpack(fileName, outFolder, playerName):
     for i in range(commandNum):
         section = reading[(commandStart + (i * 82)):(commandStart + ((i + 1) * 82))]
         ourDict["commands"].append(command(section))
-        
+    
+    ourDict["reactionTable"] = []
+    reactionNum = int.from_bytes(reading[(commandStart + (commandNum * 82)):(commandStart + (commandNum * 82) + 4)], "little")
+    reactionStart = commandStart + (commandNum * 82) + 4
+    for i in range(reactionNum):
+        small = { "Reaction Skill": int.from_bytes(reading[(reactionStart + (i * 4)):(reactionStart + (i * 4) + 2)], "little"),
+            "Spark Skill": int.from_bytes(reading[(reactionStart + (i * 4) + 2):(reactionStart + (i * 4) + 4)], "little") }
+        # sparks are (probably) meant to be skills that spawn objects
+        ourDict["reactionTable"].append(small)
+    
     newFile = open(outFolder + "playerData.json", "wt")
     json.dump(ourDict, newFile, indent = "\t")
     newFile.close()
