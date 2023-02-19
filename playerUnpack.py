@@ -64,6 +64,7 @@ def command(section):
         value = params[i + 15] # divide by 100 for Hold, since it becomes time. otherwise, it is number of pressings/beginning full circles needed.
         inputs.append([ relation, theDir, buttons, extra, value ]) 
     
+    # the Time Limit does not seem to account for hold times at all. I assume intra-skill commands are like this as well.
     final = { "Name": name, "Time Limit": params[0] / 100, "Aerial Skill": params[1], "Ground Skill": params[2], "Ground Far Skill": params[3],
         "Crouching Skill": params[4] }
     for i in range(10):
