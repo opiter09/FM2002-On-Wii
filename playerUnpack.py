@@ -70,6 +70,12 @@ def command(section):
     for i in range(10):
         final["input" + str(i + 1)] = inputs[i]
     return(final)
+    
+def signed(num):
+    if (num > 30000):
+        return(num - 65536)
+    else:
+        return(num)
 
 def unpack(fileName, outFolder, playerName):
     opening = open(fileName, "rb")
@@ -153,6 +159,39 @@ def unpack(fileName, outFolder, playerName):
         # sparks are (probably) meant to be skills that spawn objects
         ourDict["reactionTable"].append(small)
     
+    ourDict["commonImageTable"] = []
+    commonNum = int.from_bytes(reading[(reactionStart + (reactionNum * 4)):(reactionStart + (reactionNum * 4) + 4)], "little")
+    commonStart = reactionStart + (reactionNum * 4) + 4
+    for i in range(commonNum):
+        small = { "Image ID": int.from_bytes(reading[(commonStart + (i * 6)):(commonStart + (i * 6) + 2)], "little"),
+            "X Offset": signed(int.from_bytes(reading[(commonStart + (i * 6) + 2):(commonStart + (i * 6) + 4)], "little")),
+            "Y Offset": signed(int.from_bytes(reading[(commonStart + (i * 6) + 4):(commonStart + (i * 6) + 6)], "little")) }
+        ourDict["commonImageTable"].append(small)
+    
+    ourDict["age"] = int.from_bytes(reading[(commonStart + (commonNum * 6) + 0x2BBC):(commonStart + (commonNum * 6) + 0x2BBC + 4)], "little")
+    genders = [ "Man", "Woman", "Both", "Neither" ]
+    ourDict["gender"] = genders[reading[commonStart + (commonNum * 6) + 0x2BBC + 4]]
+
+    basic = commonStart + (commonNum * 6) + 0x328D
+    ourDict["healthBarYOffset"] = int.from_bytes(reading[basic:(basic + 2)], "little")
+    ourDict["distanceBeforeFar"] = int.from_bytes(reading[(basic + 2):(basic + 4)], "little")
+    ourDict["divisorForBlockingDamage"] = reading[basic + 4]
+    ourDict["damageReductionStart"] = reading[basic + 5] / 100 # at this % of heath or less, you take less damage.
+    ourDict["damageReductionMultiplier"] = reading[basic + 6] / 100 # in the above case, the damage is multiplied by this amount.
+    ourDict["comboDamageDecrease"] = reading[basic + 7] # [this number * (# of hits - 1)] less damage than normal is dealt.
+    ourDict["guardButton"] = chr(ord("A") + reading[basic + 8])
+    ourDict["lifeTotal"] = int.from_bytes(reading[(basic + 9):(basic + 13)], "little")
+    ourDict["specialTotal"] = int.from_bytes(reading[(basic + 13):(basic + 17)], "little") # note that 200 SP = 1 bar. this seems to be hardcoded.
+    ourDict["maximumSpecialBars"] = reading[basic + 17]
+    binList = binarize(reading[basic + 21])
+    ourDict["autoBlock"] = binList[0] # can automatically block a move once every 1.5-2 seconds.
+    ourDict["canBlockInTheAir"] = binList[1]
+    ourDict["playableInVersusMode"] = binList[2] # this appears to not set properly? I'll probably just have it always be true.
+    ourDict["hasGuardButton"] = binList[3]
+    ourDict["specialIncreaseOnUserHit"] = signed(int.from_bytes(reading[(basic + 29):(basic + 31)], "little"))
+    ourDict["specialIncreaseOnOpponentHit"] = signed(int.from_bytes(reading[(basic + 31):(basic + 32)], "little"))
+    ourDict["startingSpecialBars"] = reading[basic + 33]
+
     newFile = open(outFolder + "playerData.json", "wt")
     json.dump(ourDict, newFile, indent = "\t")
     newFile.close()
