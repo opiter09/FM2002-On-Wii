@@ -156,7 +156,7 @@ def unpack(fileName, outFolder, playerName):
     for i in range(reactionNum):
         small = { "Reaction Skill": int.from_bytes(reading[(reactionStart + (i * 4)):(reactionStart + (i * 4) + 2)], "little"),
             "Spark Skill": int.from_bytes(reading[(reactionStart + (i * 4) + 2):(reactionStart + (i * 4) + 4)], "little") }
-        # sparks are (probably) meant to be skills that spawn objects
+        # sparks are not to be Objects, but rather plain Images which get spawned as objects.
         ourDict["reactionTable"].append(small)
     
     ourDict["commonImageTable"] = []
