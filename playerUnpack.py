@@ -184,7 +184,9 @@ def unpack(fileName, outFolder, playerName):
     ourDict["specialTotal"] = int.from_bytes(reading[(basic + 13):(basic + 17)], "little") # note that 200 SP = 1 bar. this seems to be hardcoded.
     ourDict["maximumSpecialBars"] = reading[basic + 17]
     binList = binarize(reading[basic + 21])
-    ourDict["autoBlock"] = binList[0] # can automatically block a move once every 1.5-2 seconds.
+    ourDict["autoBlock"] = binList[0]
+    # this can automatically block a move approximately once every 0.5 seconds. moves blocked this way always deal 1 damage, but this does not
+    # prevent effects or hitstun.
     ourDict["canBlockInTheAir"] = binList[1]
     ourDict["playableInVersusMode"] = binList[2] # this appears to not set properly? I'll probably just have it always be true.
     ourDict["hasGuardButton"] = binList[3]
