@@ -1,21 +1,4 @@
-def signed(num):
-    if (num > 30000):
-        return(num - 65536)
-    else:
-        return(num)
-        
-def miniSigned(num):
-    if (num > 127):
-        return(num - 255)
-    else:
-        return(num)
-
-def binarize(num):
-    binary = bin(num)[2:]
-    binList = [ bool(int(binary[x])) for x in range(len(binary)) ]
-    binList.reverse()
-    binList = binList + ([False] * 16)
-    return(binList)
+from common import *
     
 def variabled(num):
     binList = binarize(num)

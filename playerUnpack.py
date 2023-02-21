@@ -3,26 +3,8 @@ import shutil
 import subprocess
 from PIL import Image
 import json
-import itemData 
-
-def transparency(inputFile):
-    img = Image.open(inputFile)
-    img = img.convert("RGBA")
-    pixdata = img.load()
-    color = pixdata[0, 0]
-    width, height = img.size
-    for y in range(height):
-        for x in range(width):
-            if (pixdata[x, y] == color):
-                pixdata[x, y] = (255, 255, 255, 0)
-    img.save(inputFile, "PNG")
-
-def binarize(num):
-    binary = bin(num)[2:]
-    binList = [ bool(int(binary[x])) for x in range(len(binary)) ]
-    binList.reverse()
-    binList = binList + ([False] * 16)
-    return(binList)
+import itemData
+from common import *
 
 def command(section):
     name = section[0:32].decode("UTF-8", errors = "ignore").split("\0")[0]
@@ -70,12 +52,6 @@ def command(section):
     for i in range(10):
         final["input" + str(i + 1)] = inputs[i]
     return(final)
-    
-def signed(num):
-    if (num > 30000):
-        return(num - 65536)
-    else:
-        return(num)
 
 def unpack(fileName, outFolder, playerName):
     opening = open(fileName, "rb")
