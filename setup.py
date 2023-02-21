@@ -51,6 +51,9 @@ while True:
         for root, dirs, files in os.walk(values["data"]):
             for file in files:
                 if (file.endswith(".player") == True):
+                    nameF = open(folder + "Players/playerNames.txt", "at")
+                    nameF.write(file[0:-7] + "\n")
+                    nameF.close()
                     os.mkdir(folder + "Players/" + file[0:-7])
                     subprocess.run([ "sprite_sound_ripper.exe", file ], cwd = values["data"])
                     os.mkdir(folder + "Players/" + file[0:-7] + "/Images")
