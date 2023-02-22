@@ -1,6 +1,6 @@
 
 *.pyc
-*.json
+*Data.json
 *name.txt
 *.png
 *.wav

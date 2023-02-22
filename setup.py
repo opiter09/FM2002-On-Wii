@@ -2,7 +2,6 @@ import PySimpleGUI as psg
 import os
 import shutil
 import subprocess
-from PIL import Image
 import json
 import itemData
 import unpack
@@ -47,9 +46,15 @@ while True:
         os.mkdir(folder + "Players/")
         os.mkdir(folder + "Stages/")
         os.mkdir(folder + "Demos/")
-        name = open(folder + "name.txt", "wt")
-        name.write(values["data"].split("/")[-1])
-        name.close()
+
+        nameFile = open("apps/fm2k2player/data/names.json", "rt")
+        name = json.load(nameFile.read())
+        name[values["button"]] = values["data"].split("/")[-1]
+        nameFile.close()
+        nameFile = open("apps/fm2k2player/data/names.json", "wt")
+        json.dump(name, nameFile, indent = "\t")
+        nameFile.close()
+
         for root, dirs, files in os.walk(values["data"]):
             for file in files:
                 if (file.endswith(".player") == True):
