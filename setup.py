@@ -5,7 +5,7 @@ import subprocess
 from PIL import Image
 import json
 import itemData
-import playerUnpack       
+import unpack
     
 layout = [
     [ psg.Text("Built Game Folder"), psg.Input("", key = "data"), psg.FolderBrowse() ],
@@ -45,6 +45,8 @@ while True:
             shutil.rmtree(folder)
         os.mkdir(folder)
         os.mkdir(folder + "Players/")
+        os.mkdir(folder + "Stages/")
+        os.mkdir(folder + "Demos/")
         name = open(folder + "name.txt", "wt")
         name.write(values["data"].split("/")[-1])
         name.close()
@@ -65,7 +67,39 @@ while True:
                             elif (os.path.join(r, thing).split("\\")[1] == "snd"):
                                 shutil.copyfile(file[0:-7] + "/snd/" + thing, folder + "Players/" + file[0:-7] + "/Sounds/" + thing)
                     shutil.rmtree(file[0:-7])
-                    playerUnpack.unpack(os.path.join(root, file), folder + "Players/" + file[0:-7] + "/", file[0:-7])
+                    unpack.unpack(os.path.join(root, file), folder + "Players/" + file[0:-7] + "/", "player")
+                elif (file.endswith(".stage") == True):
+                    nameF = open(folder + "Stages/stageNames.txt", "at")
+                    nameF.write(file[0:-6] + "\n")
+                    nameF.close()
+                    os.mkdir(folder + "Stages/" + file[0:-6])
+                    subprocess.run([ "sprite_sound_ripper.exe", file ], cwd = values["data"])
+                    os.mkdir(folder + "Stages/" + file[0:-6] + "/Images")
+                    os.mkdir(folder + "Stages/" + file[0:-6] + "/Sounds")
+                    for r, d, f in os.walk(file[0:-6]):
+                        for thing in f:
+                            if (os.path.join(r, thing).split("\\")[1] == thing):
+                                shutil.copyfile(file[0:-6] + "/" + thing, folder + "Stages/" + file[0:-6] + "/Images/" + thing)
+                            elif (os.path.join(r, thing).split("\\")[1] == "snd"):
+                                shutil.copyfile(file[0:-6] + "/snd/" + thing, folder + "Stages/" + file[0:-6] + "/Sounds/" + thing)
+                    shutil.rmtree(file[0:-6])
+                    unpack.unpack(os.path.join(root, file), folder + "Stages/" + file[0:-6] + "/", "stage")
+                elif (file.endswith(".demo") == True):
+                    nameF = open(folder + "Demos/demoNames.txt", "at")
+                    nameF.write(file[0:-5] + "\n")
+                    nameF.close()
+                    os.mkdir(folder + "Demos/" + file[0:-5])
+                    subprocess.run([ "sprite_sound_ripper.exe", file ], cwd = values["data"])
+                    os.mkdir(folder + "Demos/" + file[0:-5] + "/Images")
+                    os.mkdir(folder + "Demos/" + file[0:-5] + "/Sounds")
+                    for r, d, f in os.walk(file[0:-5]):
+                        for thing in f:
+                            if (os.path.join(r, thing).split("\\")[1] == thing):
+                                shutil.copyfile(file[0:-5] + "/" + thing, folder + "Demos/" + file[0:-5] + "/Images/" + thing)
+                            elif (os.path.join(r, thing).split("\\")[1] == "snd"):
+                                shutil.copyfile(file[0:-5] + "/snd/" + thing, folder + "Demos/" + file[0:-5] + "/Sounds/" + thing)
+                    shutil.rmtree(file[0:-5])
+                    unpack.unpack(os.path.join(root, file), folder + "Demos/" + file[0:-5] + "/", "demo")               
 
         psg.popup("Finished!")
         break

@@ -16,7 +16,7 @@ def variabled(num):
         names = [ "X Coord.", "Y Coord.", "Map X Coord.", "Map Y Coord.", "Parent X Coord.", "Parent Y Coord.", "Time", "Round Number" ]
         return(beg + " " + names[num - 0xC0])
 
-def unpack(section):
+def explicate(section, theType):
     itemTypeDict = { 0: "Header", 12: "Image", 1: "Move Frame", 25: "Defense Frame", 24: "Attack Frame", 23: "Reaction Frame", 3: "Sound",
         30: "Cancel Condition", 35: "Color Modification", 4: "Object", 31: "Variable Fork", 2: "Detect Skill Fork", 22: "Detect Condition Fork",
         32: "Detect Random Fork", 36: "Detect Command Input Fork", 10: "Go To Skill", 11: "Call Skill", 9: "Loop Skill", 7: "Change Partner Place",
@@ -25,7 +25,15 @@ def unpack(section):
     itemType = itemTypeDict[section[0]]
     params = [int.from_bytes(section[x:(x + 2)], "little") for x in range(1, 16, 2)]
     if (itemType == "Header"):
-        return({ "type": itemType, "Skill Level": int.from_bytes(section[2:4], "little") })
+        if (theType == "player"):
+            return({ "type": itemType, "Skill Level": int.from_bytes(section[2:4], "little") })
+        elif (theType == "stage"):
+            binList = binarize(section[1])
+            return({ "type": itemType, "Horizontal Wrap": binList[1], "Vertical Wrap": binList[2], "Uses X Increase": binList[3],
+                "Uses Y Increase": binList[4], "X Bounds Increase": abs(signed(int.from_bytes(section[2:4], "little"))),
+                "Y Bounds Increase": abs(signed(int.from_bytes(section[4:6], "little"))) })
+        elif (theType == "demo"):
+            return({ "type": itemType })
     elif (itemType == "Image"):
         image = section[3]
         if (section[4] >= 0x40) and (section[4] < 0x60):

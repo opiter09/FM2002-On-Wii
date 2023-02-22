@@ -1,7 +1,6 @@
 import os
 import shutil
 import subprocess
-from PIL import Image
 import json
 import itemData
 from common import *
@@ -53,7 +52,7 @@ def command(section):
         final["input" + str(i + 1)] = inputs[i]
     return(final)
 
-def unpack(fileName, outFolder, playerName):
+def unpack(fileName, outFolder, theType):
     opening = open(fileName, "rb")
     reading = opening.read()
     opening.close()
@@ -82,7 +81,7 @@ def unpack(fileName, outFolder, playerName):
                 scriptIndex = j - 1
                 break
         section = reading[(itemStart + (i * 16)):(itemStart + ((i + 1) * 16))]
-        ourDict["scripts"][scriptIndex].append(itemData.unpack(section))
+        ourDict["scripts"][scriptIndex].append(itemData.explicate(section, theType))
 
     imageNum = int.from_bytes(reading[(itemStart + (itemNum * 16)):(itemStart + (itemNum * 16) + 4)], "little")
     imageStart = itemStart + (itemNum * 16) + 4
@@ -118,7 +117,23 @@ def unpack(fileName, outFolder, playerName):
     for i in range(soundNum):
         size = int.from_bytes(reading[(offset2 + 36):(offset2 + 40)], "little")
         offset2 = offset2 + 42 + size
-    
+        
+    if (theType == "stage"):
+        ourDict["bgmSound"] = int.from_bytes(reading[(offset2 + 4):(offset2 + 6)], "little")
+        newFile = open(outFolder + "stageData.json", "wt")
+        json.dump(ourDict, newFile, indent = "\t")
+        newFile.close()
+        return
+        
+    if (theType == "demo"):
+        ourDict["bgmSound"] = int.from_bytes(reading[(offset2 + 4):(offset2 + 6)], "little")
+        ourDict["duration"] = int.from_bytes(reading[(offset2 + 9):(offset2 + 13)], "little") / 100 # zero means it goes on forever
+        ourDict["buttonPressEnds"] = bool(reading[offset2 + 6])
+        newFile = open(outFolder + "demoData.json", "wt")
+        json.dump(ourDict, newFile, indent = "\t")
+        newFile.close()
+        return
+
     commandNum = int.from_bytes(reading[(offset2 + 4):(offset2 + 8)], "little")
     commandStart = offset2 + 8
     ourDict["commands"] = []

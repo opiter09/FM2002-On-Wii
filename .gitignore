@@ -6,3 +6,5 @@
 *.wav
 unexploredStart.txt
 *playerNames.txt
+*stageNames.txt
+*demoNames.txt
