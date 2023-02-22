@@ -48,9 +48,9 @@ while True:
         os.mkdir(folder + "Demos/")
 
         nameFile = open("apps/fm2k2player/data/names.json", "rt")
-        name = json.load(nameFile.read())
-        name[values["button"]] = values["data"].split("/")[-1]
+        name = json.load(nameFile)
         nameFile.close()
+        name[values["button"]] = values["data"].split("/")[-2]
         nameFile = open("apps/fm2k2player/data/names.json", "wt")
         json.dump(name, nameFile, indent = "\t")
         nameFile.close()
