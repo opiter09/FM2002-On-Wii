@@ -46,6 +46,9 @@ while True:
         os.mkdir(folder + "Players/")
         os.mkdir(folder + "Stages/")
         os.mkdir(folder + "Demos/")
+        os.mkdir(folder + "Basic/")
+        os.mkdir(folder + "Basic/Images")
+        os.mkdir(folder + "Basic/Sounds")
 
         nameFile = open("apps/fm2k2player/data/names.json", "rt")
         name = json.load(nameFile)
@@ -104,7 +107,17 @@ while True:
                             elif (os.path.join(r, thing).split("\\")[1] == "snd"):
                                 shutil.copyfile(file[0:-5] + "/snd/" + thing, folder + "Demos/" + file[0:-5] + "/Sounds/" + thing)
                     shutil.rmtree(file[0:-5])
-                    unpack.unpack(os.path.join(root, file), folder + "Demos/" + file[0:-5] + "/", "demo")               
+                    unpack.unpack(os.path.join(root, file), folder + "Demos/" + file[0:-5] + "/", "demo")
+                elif (file.endswith(".kgt") == True):
+                    subprocess.run([ "sprite_sound_ripper.exe", file ], cwd = values["data"])
+                    for r, d, f in os.walk(file[0:-4]):
+                        for thing in f:
+                            if (os.path.join(r, thing).split("\\")[1] == thing):
+                                shutil.copyfile(file[0:-4] + "/" + thing, folder + "Basic/Images/" + thing)
+                            elif (os.path.join(r, thing).split("\\")[1] == "snd"):
+                                shutil.copyfile(file[0:-4] + "/snd/" + thing, folder + "Basic/Sounds/" + thing)
+                    shutil.rmtree(file[0:-4])
+                    unpack.unpack(os.path.join(root, file), folder + "Basic/", "basic")                  
 
         psg.popup("Finished!")
         break

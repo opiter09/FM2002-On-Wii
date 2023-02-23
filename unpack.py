@@ -81,7 +81,7 @@ def unpack(fileName, outFolder, theType):
                 scriptIndex = j - 1
                 break
         section = reading[(itemStart + (i * 16)):(itemStart + ((i + 1) * 16))]
-        ourDict["scripts"][scriptIndex].append(itemData.explicate(section, theType))
+        ourDict["scripts"][scriptIndex].append(itemData.explicate(section, theType, scriptIndex))
 
     imageNum = int.from_bytes(reading[(itemStart + (itemNum * 16)):(itemStart + (itemNum * 16) + 4)], "little")
     imageStart = itemStart + (itemNum * 16) + 4
@@ -123,13 +123,61 @@ def unpack(fileName, outFolder, theType):
         newFile = open(outFolder + "stageData.json", "wt")
         json.dump(ourDict, newFile, indent = "\t")
         newFile.close()
-        return
-        
-    if (theType == "demo"):
+        return  
+    elif (theType == "demo"):
         ourDict["bgmSound"] = int.from_bytes(reading[(offset2 + 4):(offset2 + 6)], "little")
-        ourDict["duration"] = int.from_bytes(reading[(offset2 + 9):(offset2 + 13)], "little") / 100 # zero means it goes on forever
+        ourDict["duration"] = int.from_bytes(reading[(offset2 + 9):(offset2 + 13)], "little") / 100 # zero means it goes on forever.
         ourDict["buttonPressEnds"] = bool(reading[offset2 + 6])
         newFile = open(outFolder + "demoData.json", "wt")
+        json.dump(ourDict, newFile, indent = "\t")
+        newFile.close()
+        return
+
+    if (theType == "basic"):
+        playerNum = len(open(outFolder[0:-6] + "Players/playerNames.txt", "rt").read().split("\n")) - 1
+        offset3 = offset2 + 4 + (playerNum * 256) + 0x2A00 + 0x1C26
+        ourDict["globalHitCooldown"] = reading[offset3] / 100
+        ourDict["globalGuardCooldown"] = reading[offset3 + 1] / 100
+        ourDict["globalClankCooldown"] = reading[offset3 + 1] / 100
+        # those three determine the time before you can hit after hitting, guard after guarding, etc. for hitting and clanking I assume if you try
+        # it no damage is dealt at all.
+        ourDict["lifeBarSideNumbers"] = bool(reading[offset3 - 4])
+
+        demoNum = len(open(outFolder[0:-6] + "Demos/demoNames.txt", "rt").read().split("\n")) - 1
+        dList = []
+        for i in range(0, demoNum * 2, 2):
+            dList.append(reading[(offset3 + 0x3200 + (i * 0x80)):(offset3 + 0x3200 + ((i + 1) * 0x80))].decode("UTF-8").split("\0")[0]
+        offset4 = offset3 + 0x9600
+        ourDict["usedDemos"]: { 
+            "Title Screen": dList[reading[offset4]],
+            "1P Char Select": dList[reading[offset4 + 1]],
+            "VS Char Select": dList[reading[offset4 + 2]],
+            "Team Char Select": dList[reading[offset4 + 3]],
+            "Game Over": dList[reading[offset4 + 4]],
+            "Pre-Title Opening": dList[reading[offset4 + 5]]
+        }
+
+        binList = binarize(reading[offset4 + 8])
+        ourDict["isLocked"] = binList[0]
+        ourDict["usesClankCooldown"] = binList[1]
+        ourDict["hasStoryMode"] = binList[2]
+        ourDict["hasVersusMode"] = binList[3]
+        ourDict["hasTeamMode"] = binList[4]
+        ourDict["playerLifeShownOverHeads"] = binList[5]
+        ourDict["titleCursorWillNotDisappear"] = binList[6]
+        
+        offset5 + offset4 + 12 + 0x1A08
+        params = [ signed(int.from_bytes(reading[x:(x + 2)], "little")) for x in range(offset5, offset5 + 28, 2) ]
+        # everything below is X then Y (or columns then rows, in one case).
+        ourDict["firstCharPicturePosition"] = [ params[0], params[1] ]
+        ourDict["distanceBetweenCharacters"] = [ params[2], params[3] ]
+        ourDict["numberOfColumnsAndRows"] = [ params[4], params[5] ]
+        ourDict["player1StartingCursorPos"] = [params[6], params[7] ]
+        ourDict["player1CursorMovement"] = [ params[8], params[9] ] # the movements are offsets, how much you shift each time.
+        ourDict["player2StartingCursorPos"] = [params[10], params[11] ]
+        ourDict["player2CursorMovement"] = [ params[12], params[13] ]
+        
+        newFile = open(outFolder + "basicData.json", "wt")
         json.dump(ourDict, newFile, indent = "\t")
         newFile.close()
         return
