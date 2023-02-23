@@ -7,8 +7,8 @@ import itemData
 import unpack
     
 layout = [
-    [ psg.Text("Built Game Folder"), psg.Input("", key = "data"), psg.FolderBrowse() ],
-    [ psg.Text("      SD Card Root"), psg.Input("", key = "root"), psg.FolderBrowse() ],
+    [ psg.Text("Game Directory:"), psg.Input("", key = "data"), psg.FolderBrowse() ],
+    [ psg.Text("   SD Card Root:"), psg.Input("", key = "root"), psg.FolderBrowse() ],
     [
         psg.Text("Button:"),
         psg.DropDown(values = ["A", "B", "X", "Y", "L", "R", "ZL", "ZR", "Plus", "Minus"], default_value = "A", key = "button"),
