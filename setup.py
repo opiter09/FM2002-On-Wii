@@ -50,12 +50,8 @@ while True:
         os.mkdir(folder + "Basic/Images")
         os.mkdir(folder + "Basic/Sounds")
 
-        nameFile = open("apps/fm2k2player/data/names.json", "rt")
-        name = json.load(nameFile)
-        nameFile.close()
-        name[values["button"]] = values["data"].split("/")[-2]
-        nameFile = open("apps/fm2k2player/data/names.json", "wt")
-        json.dump(name, nameFile, indent = "\t")
+        nameFile = open(folder + "name.txt", "wt")
+        nameFile.write(values["data"].split("/")[-2])
         nameFile.close()
 
         for root, dirs, files in os.walk(values["data"]):
@@ -119,6 +115,12 @@ while True:
                     shutil.rmtree(file[0:-4])
                     unpack.unpack(os.path.join(root, file), folder + "Basic/", "basic")                  
 
+        if (os.path.isdir(values["root"] + "apps/fm2k2player/") == False):
+            shutil.copytree("apps/fm2k2player/", values["root"] + "apps/fm2k2player/")
+        else:
+            if (os.path.isdir(values["root"] + folder) == True):
+                shutil.rmtree(values["root"] + folder)
+            shutil.copytree(folder, values["root"] + folder)
         psg.popup("Finished!")
         break
 
