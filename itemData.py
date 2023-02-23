@@ -36,7 +36,7 @@ def explicate(section, theType, currentScript):
             return({ "Type": itemType })
         elif (theType == "basic"):
             if (currentScript == 1):
-                locs = ["left", "right"]
+                locs = ["Left", "Right"]
                 return({ "Type": itemType, "Number Position": locs[section[1]], "Letter Width": section[2] }) # width does nothing lol.
             elif (currentScript >= 13) and (currentScript <= 33):
                 return({ "Type": itemType, "Duration": int.from_bytes(section[1:3], "little") / 100 })

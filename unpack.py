@@ -109,7 +109,11 @@ def unpack(fileName, outFolder, theType):
     for root, dirs, files in os.walk(outFolder + "Images/"):
         for file in files:
             if (file.startswith("new_") == True):
-                os.rename(outFolder + "Images/" + file, outFolder + "Images/" + file[4:])
+                try:
+                    os.rename(outFolder + "Images/" + file, outFolder + "Images/" + file[4:])
+                except FileExistsError as error:
+                    os.remove(outFolder + "Images/" + file[4:])
+                    os.rename(outFolder + "Images/" + file, outFolder + "Images/" + file[4:])
     
     soundNum = int.from_bytes(reading[(offset + (8 * 1056)):(offset + (8 * 1056) + 4)], "little")
     soundStart = offset + (8 * 1056) + 4
@@ -134,21 +138,20 @@ def unpack(fileName, outFolder, theType):
         return
 
     if (theType == "basic"):
-        playerNum = len(open(outFolder[0:-6] + "Players/playerNames.txt", "rt").read().split("\n")) - 1
-        offset3 = offset2 + 4 + (playerNum * 256) + 0x2A00 + 0x1C26
+        offset3 = offset2 + 4 + 0x3200 + 0x1C25
         ourDict["globalHitCooldown"] = reading[offset3] / 100
         ourDict["globalGuardCooldown"] = reading[offset3 + 1] / 100
-        ourDict["globalClankCooldown"] = reading[offset3 + 1] / 100
+        ourDict["globalClankCooldown"] = reading[offset3 + 2] / 100
         # those three determine the time before you can hit after hitting, guard after guarding, etc. for hitting and clanking I assume if you try
         # it no damage is dealt at all.
         ourDict["lifeBarSideNumbers"] = bool(reading[offset3 - 4])
 
         demoNum = len(open(outFolder[0:-6] + "Demos/demoNames.txt", "rt").read().split("\n")) - 1
-        dList = []
+        dList = ["Unused"]
         for i in range(0, demoNum * 2, 2):
-            dList.append(reading[(offset3 + 0x3200 + (i * 0x80)):(offset3 + 0x3200 + ((i + 1) * 0x80))].decode("UTF-8").split("\0")[0]
-        offset4 = offset3 + 0x9600
-        ourDict["usedDemos"]: { 
+            dList.append(reading[(offset3 + 3 + 0x3200 + (i * 0x80)):(offset3 + 3 + 0x3200 + ((i + 1) * 0x80))].decode("UTF-8").split("\0")[0])
+        offset4 = offset3 + 0x9600 + 3
+        ourDict["usedDemos"] = { 
             "Title Screen": dList[reading[offset4]],
             "1P Char Select": dList[reading[offset4 + 1]],
             "VS Char Select": dList[reading[offset4 + 2]],
@@ -166,7 +169,7 @@ def unpack(fileName, outFolder, theType):
         ourDict["playerLifeShownOverHeads"] = binList[5]
         ourDict["titleCursorWillNotDisappear"] = binList[6]
         
-        offset5 + offset4 + 12 + 0x1A08
+        offset5 = offset4 + 12 + 0x1A08
         params = [ signed(int.from_bytes(reading[x:(x + 2)], "little")) for x in range(offset5, offset5 + 28, 2) ]
         # everything below is X then Y (or columns then rows, in one case).
         ourDict["firstCharPicturePosition"] = [ params[0], params[1] ]
