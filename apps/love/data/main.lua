@@ -27,7 +27,7 @@ local function jsonLoad(folder)
 	temp = string.format("%s/Players/playerNames.txt", folder)
 	names = love.filesystem.read(temp)
 	split = lume.split(names, "\r\n")
-	for i, v in pairs(lume.split(split) do
+	for i, v in pairs(split) do
 		if (v ~= "") then
 			temp = string.format("%s/Players/%s/playerData.json", folder, v)
 			data = love.filesystem.read(temp)
@@ -93,5 +93,4 @@ function love.draw()
 	end
 
 	love.graphics.print(root, 200, 100)
-	end
 end
