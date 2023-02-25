@@ -1,11 +1,11 @@
 lume = require("lume")
 json = require("json")
-local main, root, buttons, usedButtons, pad1, pad2
 
 function love.load()
 	main = 1
 	root = ""
 	buttons = { "A", "B", "X", "Y", "L", "R", "ZL", "ZR", "Plus", "Minus" }
+	loveButtons = { "a", "b", "x", "y", "l", "r", "zl", "zr", "+", "-" }
 	usedButtons = {}
 	for i, v in ipairs(buttons) do
 		input = string.format("%s Button/name.txt", v)
@@ -22,7 +22,7 @@ end
 function love.update(dt)
 	if (main == 1) then
 		for i, v in ipairs(buttons) do
-			if (pad1:isClassicDown(string.lower(v)) == true) and (usedButtons[i] ~= "") then
+			if (pad1:isClassicDown(loveButtons[i]) == true) and (usedButtons[i] ~= "") then
 				root = string.format("%s Button", v)
 				main = 0
 				break
@@ -41,7 +41,9 @@ function love.draw()
 				love.graphics.print(string.format("%s Button - %s", buttons[i], v), 250, vert)
 			end
 		end
-	else
-		love.graphics.print(root, 200, 100)
+		return
+	end
+
+	love.graphics.print(root, 200, 100)
 	end
 end
