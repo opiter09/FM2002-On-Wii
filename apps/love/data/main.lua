@@ -1,6 +1,53 @@
 lume = require("lume")
 json = require("json")
 
+local function jsonLoad(folder)
+	local temp
+	local names
+	local split
+	local data
+
+	temp = string.format("%s/Basic/basicData.json", folder)
+	data = love.filesystem.read(temp)
+	basicData = json.decode(data)
+	
+	stageData = {}
+	temp = string.format("%s/Stages/stageNames.txt", folder)
+	names = love.filesystem.read(temp)
+	split = lume.split(names, "\r\n")
+	for i, v in pairs(split) do
+		if (v ~= "") then
+			temp = string.format("%s/Stages/%s/stageData.json", folder, v)
+			data = love.filesystem.read(temp)
+			stageData[v] = json.decode(data)
+		end
+	end
+	
+	playerData = {}
+	temp = string.format("%s/Players/playerNames.txt", folder)
+	names = love.filesystem.read(temp)
+	split = lume.split(names, "\r\n")
+	for i, v in pairs(lume.split(split) do
+		if (v ~= "") then
+			temp = string.format("%s/Players/%s/playerData.json", folder, v)
+			data = love.filesystem.read(temp)
+			playerData[v] = json.decode(data)
+		end
+	end
+	
+	demoData = {}
+	temp = string.format("%s/Demos/demoNames.txt", folder)
+	names = love.filesystem.read(temp)
+	split = lume.split(names, "\r\n")
+	for i, v in pairs(split) do
+		if (v ~= "") then
+			temp = string.format("%s/Demos/%s/demoData.json", folder, v)
+			data = love.filesystem.read(temp)
+			demoData[v] = json.decode(data)
+		end
+	end
+end
+
 function love.load()
 	main = 1
 	root = ""
@@ -24,6 +71,7 @@ function love.update(dt)
 		for i, v in ipairs(buttons) do
 			if (pad1:isClassicDown(loveButtons[i]) == true) and (usedButtons[i] ~= "") then
 				root = string.format("%s Button", v)
+				jsonLoad(root)
 				main = 0
 				break
 			end
