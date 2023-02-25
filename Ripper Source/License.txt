@@ -1,0 +1,3 @@
+This code came without a license, and is NOT in the public domain as the result of this
+repo's license. I just included because it felt wrong not to, and well "it's better to
+beg for forgiveness than ask for permission."
