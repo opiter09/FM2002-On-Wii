@@ -39,7 +39,7 @@ while True:
         subprocess.run([ values["data"] + "FM2Kunlock.exe" ])
         shutil.copyfile("sprite_sound_ripper.exe", values["data"] + "sprite_sound_ripper.exe")
 
-        folder = "apps/wiilove/data/" + values["button"] + " Button/"
+        folder = "apps/love/data/" + values["button"] + " Button/"
         if (os.path.isdir(folder) == True):
             shutil.rmtree(folder)
         os.mkdir(folder)
@@ -115,8 +115,8 @@ while True:
                     shutil.rmtree(file[0:-4])
                     unpack.unpack(os.path.join(root, file), folder + "Basic/", "basic")                  
 
-        if (os.path.isdir(values["root"] + "apps/wiilove/") == False):
-            shutil.copytree("apps/wiilove/", values["root"] + "apps/wiilove/")
+        if (os.path.isdir(values["root"] + "apps/love/") == False):
+            shutil.copytree("apps/love/", values["root"] + "apps/love/")
         else:
             if (os.path.isdir(values["root"] + folder) == True):
                 shutil.rmtree(values["root"] + folder)
