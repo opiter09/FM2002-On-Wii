@@ -1,5 +1,6 @@
 lume = require("lume")
 json = require("json")
+binds = require("keybinds")
 
 local function jsonLoad(folder)
 	local temp
@@ -92,5 +93,5 @@ function love.draw()
 		return
 	end
 
-	love.graphics.print(root, 200, 100)
+	--love.graphics.print(binds["player1"]["a"], 200, 100)
 end
