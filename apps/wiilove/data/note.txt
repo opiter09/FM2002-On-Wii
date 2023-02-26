@@ -1,0 +1,3 @@
+All of the lua code for this port is in the "save" folder. Yes, I know it's weird,
+but this version of WiiLove has a bug with the "require" feature that makes this
+necessary.
