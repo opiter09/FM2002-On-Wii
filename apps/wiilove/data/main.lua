@@ -4,8 +4,7 @@ binds = require("keybinds")
 
 local function jsonLoad(folder)
 	local temp
-	local names
-	local split
+	local temp2
 	local data
 
 	temp = string.format("%s/Basic/basicData.json", folder)
@@ -14,9 +13,9 @@ local function jsonLoad(folder)
 	
 	stageData = {}
 	temp = string.format("%s/Stages/stageNames.txt", folder)
-	names = love.filesystem.read(temp)
-	split = lume.split(names, "\r\n")
-	for i, v in pairs(split) do
+	temp2 = love.filesystem.read(temp)
+	stageNames = lume.split(temp2, "\r\n")
+	for i, v in pairs(stageNames) do
 		if (v ~= "") then
 			temp = string.format("%s/Stages/%s/stageData.json", folder, v)
 			data = love.filesystem.read(temp)
@@ -26,9 +25,9 @@ local function jsonLoad(folder)
 	
 	playerData = {}
 	temp = string.format("%s/Players/playerNames.txt", folder)
-	names = love.filesystem.read(temp)
-	split = lume.split(names, "\r\n")
-	for i, v in pairs(split) do
+	temp2 = love.filesystem.read(temp)
+	playerNames = lume.split(temp2, "\r\n")
+	for i, v in pairs(playerNames) do
 		if (v ~= "") then
 			temp = string.format("%s/Players/%s/playerData.json", folder, v)
 			data = love.filesystem.read(temp)
@@ -38,9 +37,9 @@ local function jsonLoad(folder)
 	
 	demoData = {}
 	temp = string.format("%s/Demos/demoNames.txt", folder)
-	names = love.filesystem.read(temp)
-	split = lume.split(names, "\r\n")
-	for i, v in pairs(split) do
+	temp2 = love.filesystem.read(temp)
+	demoNames = lume.split(temp2, "\r\n")
+	for i, v in pairs(demoNames) do
 		if (v ~= "") then
 			temp = string.format("%s/Demos/%s/demoData.json", folder, v)
 			data = love.filesystem.read(temp)
