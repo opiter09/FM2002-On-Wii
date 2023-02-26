@@ -38,6 +38,6 @@ for k, v in pairs(binds.player1) do
 	binds.player1[k] = string.upper(string.sub(v, 1, 1)) .. string.lower(string.sub(v, 2))
 end
 for k, v in pairs(binds.player2) do
-	binds.player1[k] = string.upper(string.sub(v, 1, 1)) .. string.lower(string.sub(v, 2))
+	binds.player2[k] = string.upper(string.sub(v, 1, 1)) .. string.lower(string.sub(v, 2))
 end
 return(binds)
