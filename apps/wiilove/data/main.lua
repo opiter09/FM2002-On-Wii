@@ -63,14 +63,12 @@ function love.load()
 			usedButtons[i] = ""
 		end
 	end
-	pad1 = love.wiimote.getWiimotes()[1]
-	pad2 = love.wiimote.getWiimotes()[2]
 end
 
 function love.update(dt)
 	if (main == 1) then
 		for i, v in ipairs(buttons) do
-			if (pad1:isClassicDown(loveButtons[i]) == true) and (usedButtons[i] ~= "") then
+			if (love.wiimote.isClassicDown(0, loveButtons[i]) == true) and (usedButtons[i] ~= "") then
 				root = string.format("%s Button", v)
 				jsonLoad(root)
 				main = 0
@@ -93,5 +91,7 @@ function love.draw()
 		return
 	end
 
-	--love.graphics.print(binds["player1"]["a"], 200, 100)
+	--loc = string.format("%s/Players/Character  1/Sounds/1.wav", root)
+	--song = love.audio.newSource(loc)
+	--song:play()
 end
