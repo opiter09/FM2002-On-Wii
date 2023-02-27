@@ -16,7 +16,7 @@ def variabled(num):
         names = [ "X Coord.", "Y Coord.", "Map X Coord.", "Map Y Coord.", "Parent X Coord.", "Parent Y Coord.", "Time", "Round Number" ]
         return(beg + " " + names[num - 0xC0])
 
-def explicate(section, theType, currentScript):
+def explicate(section, theType, scriptName):
     itemTypeDict = { 0: "Header", 12: "Image", 1: "Move Frame", 25: "Defense Frame", 24: "Attack Frame", 23: "Reaction Frame", 3: "Sound",
         30: "Cancel Condition", 35: "Color Modification", 4: "Object", 31: "Variable Fork", 2: "Detect Skill Fork", 22: "Detect Condition Fork",
         32: "Detect Random Fork", 36: "Detect Command Input Fork", 10: "Go To Skill", 11: "Call Skill", 9: "Loop Skill", 7: "Change Partner Place",
@@ -35,6 +35,12 @@ def explicate(section, theType, currentScript):
         elif (theType == "demo"):
             return({ "Type": itemType })
         elif (theType == "basic"):
+            basicNames = open("basicScripts.txt", "rt")
+            try:
+                currentScript = basicNames.read().split("\n").index(scriptName)
+            except ValueError as error:
+                currentScript = -1
+            basicNames.close()
             if (currentScript == 1):
                 locs = ["Left", "Right"]
                 return({ "Type": itemType, "Number Position": locs[section[1]], "Letter Width": section[2] }) # width does nothing lol.

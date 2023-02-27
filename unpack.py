@@ -81,7 +81,7 @@ def unpack(fileName, outFolder, theType):
                 scriptIndex = j - 1
                 break
         section = reading[(itemStart + (i * 16)):(itemStart + ((i + 1) * 16))]
-        ourDict["scripts"][scriptIndex].append(itemData.explicate(section, theType, scriptIndex))
+        ourDict["scripts"][scriptIndex].append(itemData.explicate(section, theType, ourDict["scripts"][scriptIndex][0]))
 
     imageNum = int.from_bytes(reading[(itemStart + (itemNum * 16)):(itemStart + (itemNum * 16) + 4)], "little")
     imageStart = itemStart + (itemNum * 16) + 4

@@ -1,0 +1,104 @@
+------NONE------
+Hit Letter "HIT"  
+Hit Number 0
+Hit Number 1
+Hit Number 2
+Hit Number 3
+Hit Number 4
+Hit Number 5
+Hit Number 6
+Hit Number 7
+Hit Number 8
+Hit Number 9
+Offset Hit Mark 
+Start ani. this time
+End ani. this time  
+Round #  1
+Round #  2
+Round #  3
+Round #  4
+Round #  5
+Round #  6
+Round #  7
+Round #  8
+Round #  9
+Final Round        
+Spirits 
+"K.O."  
+"Perfect"       
+"You Win"         
+"You Lose"          
+"1P WINS"       
+"2P WINS"       
+"DRAW"      
+"Double K.O."       
+Time Infinity 
+Time Number  0
+Time Number  1
+Time Number  2
+Time Number  3
+Time Number  4
+Time Number  5
+Time Number  6
+Time Number  7
+Time Number  8
+Time Number  9
+Special Stock Number 0  
+Special Stock Number 1  
+Special Stock Number 2  
+Special Stock Number 3  
+Special Stock Number 4  
+Special Stock Number 5  
+Special Stock Number 6  
+Special Stock Number 7  
+Special Stock Number 8  
+Special Stock Number 9  
+Victory MarkON
+Victory Mark Off
+Stage Layout 1      
+Stage Layout 2      
+Stage Layout 3      
+Stage Layout 4      
+Stage Layout 5      
+Stage Layout 6      
+Stage Layout 7      
+Stage Layout 8      
+Stage Layout 9      
+Stage Layout 10     
+1P Life Gauge   
+2P Life Gauge   
+1P Special Gauge    
+2P Special Gauge    
+Pos: Timer    
+Pos: Face 1P
+Pos: Face 2P
+Pos: Special Stock 1P       
+Pos: Special Stock 2P       
+Pos: Victory Mark 1P
+Pos: Victory Mark 2p
+Pos:Title Cursor
+Pos: For The Cursor: Story  
+Pos: For The Cursor: VS Mode
+Continue Cursor       
+Pos: Continue Cursor: Yes
+Pos: Continue Cursor: No   
+1P Vs screen Cursor   
+2P Vs Screen Cursor   
+1p cursor after decision  
+2p cursor afer decison    
+Pos:Title Curse for Vs mode
+PAUSE     
+Spare1
+Spare2
+Spare3
+Spare4
+Spare5
+Spare6
+Spare6
+Spare7
+Spare8
+Spare9
+Spare0
+SpareA
+SpareB
+SpareC
