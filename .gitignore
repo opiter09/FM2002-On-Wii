@@ -8,3 +8,7 @@ unexploredStart.txt
 *playerNames.txt
 *stageNames.txt
 *demoNames.txt
+apps/wii64/boxart.bin
+*.cfg
+*.ini
+*.z64

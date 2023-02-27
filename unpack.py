@@ -147,7 +147,7 @@ def unpack(fileName, outFolder, theType):
         ourDict["lifeBarSideNumbers"] = bool(reading[offset3 - 4])
 
         demoNum = len(open(outFolder[0:-6] + "Demos/demoNames.txt", "rt").read().split("\n")) - 1
-        dList = ["Unused"]
+        dList = [""]
         for i in range(0, demoNum * 2, 2):
             dList.append(reading[(offset3 + 3 + 0x3200 + (i * 0x80)):(offset3 + 3 + 0x3200 + ((i + 1) * 0x80))].decode("UTF-8").split("\0")[0])
         offset4 = offset3 + 0x9600 + 3
