@@ -1,6 +1,7 @@
 lume = require("lume")
 json = require("json")
 binds = require("keybinds")
+polls = require("polling")
 
 local function jsonLoad(folder)
 	local temp
@@ -15,6 +16,7 @@ local function jsonLoad(folder)
 	temp = string.format("%s/Stages/stageNames.txt", folder)
 	temp2 = love.filesystem.read(temp)
 	stageNames = lume.split(temp2, "\r\n")
+	table.remove(stageNames) --with only one argument, table.remove gets rid of the last element
 	for i, v in pairs(stageNames) do
 		if (v ~= "") then
 			temp = string.format("%s/Stages/%s/stageData.json", folder, v)
@@ -27,6 +29,7 @@ local function jsonLoad(folder)
 	temp = string.format("%s/Players/playerNames.txt", folder)
 	temp2 = love.filesystem.read(temp)
 	playerNames = lume.split(temp2, "\r\n")
+	table.remove(playerNames)
 	for i, v in pairs(playerNames) do
 		if (v ~= "") then
 			temp = string.format("%s/Players/%s/playerData.json", folder, v)
@@ -39,6 +42,7 @@ local function jsonLoad(folder)
 	temp = string.format("%s/Demos/demoNames.txt", folder)
 	temp2 = love.filesystem.read(temp)
 	demoNames = lume.split(temp2, "\r\n")
+	table.remove(demoNames)
 	for i, v in pairs(demoNames) do
 		if (v ~= "") then
 			temp = string.format("%s/Demos/%s/demoData.json", folder, v)
@@ -49,7 +53,7 @@ local function jsonLoad(folder)
 end
 
 function love.load()
-	main = 1
+	location = "main"
 	root = ""
 	buttons = { "A", "B", "X", "Y", "L", "R", "ZL", "ZR", "Plus", "Minus" }
 	loveButtons = { "a", "b", "x", "y", "l", "r", "zl", "zr", "+", "-" }
@@ -64,21 +68,50 @@ function love.load()
 	end
 end
 
-function love.update(dt)
-	if (main == 1) then
+function love.update(dt) -- WiiLove runs at 60 FPS
+	if (string.sub(location, -4) == "Wait") then
+		if (#polls.combined() == 0) then
+			location = string.sub(location, 1, string.len(location) - 4)
+			return
+		end
+	end
+
+	if (location == "main") then
 		for i, v in ipairs(buttons) do
-			if (love.wiimote.isClassicDown(0, loveButtons[i]) == true) and (usedButtons[i] ~= "") then
+			if (lume.find(polls.combined(), loveButtons[i]) ~= nil) and (usedButtons[i] ~= "") then
 				root = string.format("%s Button", v)
 				jsonLoad(root)
-				main = 0
+				location = "optionsWait"
+				currentStage = 1
+				roundDuration = 60
+				roundCount = 3
 				break
 			end
+		end
+	elseif (location == "options") then
+		if (lume.find(polls.combined(), "zl") ~= nil) then
+			currentStage = math.max(1, currentStage - 0.17)
+		elseif (lume.find(polls.combined(), "zr") ~= nil) then
+			currentStage = math.min(#stageNames, currentStage + 0.17)
+		elseif (lume.find(polls.combined(), "l") ~= nil) then
+			roundDuration = math.max(0, roundDuration - 0.17)
+		elseif (lume.find(polls.combined(), "r") ~= nil) then
+			roundDuration = math.min(99, roundDuration + 0.17)
+		elseif (lume.find(polls.combined(), "-") ~= nil) then
+			roundCount = math.max(1, roundCount - 0.17)
+		elseif (lume.find(polls.combined(), "+") ~= nil) then
+			roundCount = math.min(9, roundCount + 0.17)
+		elseif (lume.find(polls.combined(), "a") ~= nil) then
+			currentStage = lume.round(currentStage)
+			roundDuration = lume.round(roundDuration)
+			roundCount = lume.round(roundCount)
+			location = "openingWait"
 		end
 	end
 end
 
 function love.draw()
-	if (main == 1) then
+	if (location == "main") then
 		love.graphics.print("Press One Of The Following Buttons:", 200, 100)
 		local vert = 125
 		for i, v in ipairs(usedButtons) do
@@ -89,8 +122,11 @@ function love.draw()
 		end
 		return
 	end
-
-	--loc = string.format("%s/Players/Character  1/Sounds/1.wav", root)
-	--song = love.audio.newSource(loc)
-	--song:play()
+	
+	if (location == "options") then
+		love.graphics.print(string.format("Stage: (ZL) %s (ZR)", stageNames[lume.round(currentStage)]), 200, 100)
+		love.graphics.print(string.format("Time: (L) %s Seconds (R)", tostring(lume.round(roundDuration))), 200, 150)
+		love.graphics.print(string.format("Round#: (-) %s Rounds (+)", tostring(lume.round(roundCount))), 200, 200)
+		love.graphics.print("Press A To Continue", 215, 250)
+	end
 end
