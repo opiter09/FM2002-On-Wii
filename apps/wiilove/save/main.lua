@@ -18,11 +18,9 @@ local function jsonLoad(folder)
 	stageNames = lume.split(temp2, "\r\n")
 	table.remove(stageNames) --with only one argument, table.remove gets rid of the last element
 	for i, v in pairs(stageNames) do
-		if (v ~= "") then
-			temp = string.format("%s/Stages/%s/stageData.json", folder, v)
-			data = love.filesystem.read(temp)
-			stageData[v] = json.decode(data)
-		end
+		temp = string.format("%s/Stages/%s/stageData.json", folder, v)
+		data = love.filesystem.read(temp)
+		stageData[v] = json.decode(data)
 	end
 	
 	playerData = {}
@@ -31,11 +29,9 @@ local function jsonLoad(folder)
 	playerNames = lume.split(temp2, "\r\n")
 	table.remove(playerNames)
 	for i, v in pairs(playerNames) do
-		if (v ~= "") then
-			temp = string.format("%s/Players/%s/playerData.json", folder, v)
-			data = love.filesystem.read(temp)
-			playerData[v] = json.decode(data)
-		end
+		temp = string.format("%s/Players/%s/playerData.json", folder, v)
+		data = love.filesystem.read(temp)
+		playerData[v] = json.decode(data)
 	end
 	
 	demoData = {}
@@ -44,11 +40,9 @@ local function jsonLoad(folder)
 	demoNames = lume.split(temp2, "\r\n")
 	table.remove(demoNames)
 	for i, v in pairs(demoNames) do
-		if (v ~= "") then
-			temp = string.format("%s/Demos/%s/demoData.json", folder, v)
-			data = love.filesystem.read(temp)
-			demoData[v] = json.decode(data)
-		end
+		temp = string.format("%s/Demos/%s/demoData.json", folder, v)
+		data = love.filesystem.read(temp)
+		demoData[v] = json.decode(data)
 	end
 end
 
