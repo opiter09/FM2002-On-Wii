@@ -96,7 +96,7 @@ function love.update(dt) -- WiiLove runs at 60 FPS
 		elseif (lume.find(polls.combined(), "+") ~= nil) then
 			roundCount = math.min(9, roundCount + (10 * dt))
 		elseif (lume.find(polls.combined(), "a") ~= nil) then
-			currentStage = lume.round(currentStage)
+			currentStage = stageNames[lume.round(currentStage)]
 			roundDuration = lume.round(roundDuration)
 			roundCount = lume.round(roundCount)
 			location = "openingWait"
