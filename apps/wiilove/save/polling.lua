@@ -1,4 +1,4 @@
-lume = require("lume")
+local lume = require("lume")
 polls = {}
 
 function polls.player1()

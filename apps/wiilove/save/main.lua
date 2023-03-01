@@ -1,7 +1,10 @@
-lume = require("lume")
-json = require("json")
-binds = require("keybinds")
-polls = require("polling")
+local lume = require("lume")
+local json = require("json")
+local binds = require("keybinds")
+local polls = require("polling")
+local chara = require("characterSelect")
+local begin = require("twoDemos")
+local meat = require("fighting")
 
 local function jsonLoad(folder)
 	local temp
@@ -75,13 +78,22 @@ function love.update(dt) -- WiiLove runs at 60 FPS
 			if (lume.find(polls.combined(), loveButtons[i]) ~= nil) and (usedButtons[i] ~= "") then
 				root = string.format("%s Button", v)
 				jsonLoad(root)
-				location = "optionsWait"
+				location = "openingWait"
 				currentStage = 1
 				roundDuration = 60
 				roundCount = 3
 				break
 			end
 		end
+	elseif (location == "opening") then
+		if (basicData["usedDemos"]["Pre-Title Opening"] == "") then
+			location = "title"
+			return
+		else
+			begin.opening_update(dt)
+		end
+	elseif (location == "title") then
+		begin.title_update(dt)
 	elseif (location == "options") then
 		if (lume.find(polls.combined(), "zl") ~= nil) then
 			currentStage = math.max(1, currentStage - (10 * dt))
@@ -99,8 +111,12 @@ function love.update(dt) -- WiiLove runs at 60 FPS
 			currentStage = stageNames[lume.round(currentStage)]
 			roundDuration = lume.round(roundDuration)
 			roundCount = lume.round(roundCount)
-			location = "openingWait"
+			location = "characterWait"
 		end
+	elseif (location == "character") then
+		chara.update(dt)
+	elseif (location == "fighting") then
+		meat.update(dt)
 	end
 end
 
@@ -115,12 +131,18 @@ function love.draw()
 			end
 		end
 		return
-	end
-	
-	if (location == "options") then
+	elseif (location == "opening") then
+		begin.opening_draw()
+	elseif (location == "title") then
+		begin.title_draw()
+	elseif (location == "options") then
 		love.graphics.print(string.format("Stage: (ZL) %s (ZR)", stageNames[lume.round(currentStage)]), 200, 100)
 		love.graphics.print(string.format("Time: (L) %s Seconds (R)", tostring(lume.round(roundDuration))), 200, 150)
 		love.graphics.print(string.format("Round#: (-) %s Rounds (+)", tostring(lume.round(roundCount))), 200, 200)
 		love.graphics.print("Press A To Continue", 215, 250)
+	elseif (location == "character") then
+		chara.draw()
+	elseif (location == "fighting") then
+		meat.draw()
 	end
 end
