@@ -1,15 +1,9 @@
 begin = {}
 
-function begin.opening_update(dt)
+function begin.update(dt, which)
 end
 
-function begin.opening_draw()
-end
-
-function begin.title_update(dt)
-end
-
-function begin.title_draw()
+function begin.draw(which)
 end
 
 return(begin)

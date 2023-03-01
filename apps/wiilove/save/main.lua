@@ -90,10 +90,10 @@ function love.update(dt) -- WiiLove runs at 60 FPS
 			location = "title"
 			return
 		else
-			begin.opening_update(dt)
+			begin.update(dt, "Pre-Title Opening")
 		end
 	elseif (location == "title") then
-		begin.title_update(dt)
+		begin.update(dt, "Title Screen")
 	elseif (location == "options") then
 		if (lume.find(polls.combined(), "zl") ~= nil) then
 			currentStage = math.max(1, currentStage - (10 * dt))
@@ -132,9 +132,9 @@ function love.draw()
 		end
 		return
 	elseif (location == "opening") then
-		begin.opening_draw()
+		begin.draw("Pre-Title Opening")
 	elseif (location == "title") then
-		begin.title_draw()
+		begin.draw("Title Screen")
 	elseif (location == "options") then
 		love.graphics.print(string.format("Stage: (ZL) %s (ZR)", stageNames[lume.round(currentStage)]), 200, 100)
 		love.graphics.print(string.format("Time: (L) %s Seconds (R)", tostring(lume.round(roundDuration))), 200, 150)
