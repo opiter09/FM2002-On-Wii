@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<app version="1">
-	<name>Fighter Maker 2002 Player</name>
-	<version>1.0.0</version>
-	<coder>O. E. Academicus</coder>
-	<short_description>Plays 2DFM2002 games</short_description>
-	<long_description>Runs 2D Fighter Maker 2002 games on the Wii</long_description>
-</app>

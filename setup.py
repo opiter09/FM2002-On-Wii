@@ -8,12 +8,7 @@ import unpack
     
 layout = [
     [ psg.Text("Game Directory:"), psg.Input("", key = "data"), psg.FolderBrowse() ],
-    [ psg.Text("   SD Card Root:"), psg.Input("", key = "root"), psg.FolderBrowse() ],
-    [
-        psg.Text("Button:"),
-        psg.DropDown(values = ["A", "B", "X", "Y", "L", "R", "ZL", "ZR", "Plus", "Minus"], default_value = "A", key = "button"),
-        psg.Button("Run")
-    ]
+    [ psg.Button("Run") ]
 ]
 
 # Create the window
@@ -27,19 +22,17 @@ while True:
         break
     elif (values == None):
         continue
-    elif (values["data"] == None) or (values["root"] == None) or (values["button"] == None):
+    elif (values["data"] == None):
         continue
     elif (event == "Run"):
         if (values["data"][-1] != "/"):
             values["data"] = values["data"] + "/"
-        if (values["root"][-1] != "/"):
-            values["root"] = values["root"] + "/"
 
         shutil.copyfile("FM2Kunlock.exe", values["data"] + "FM2Kunlock.exe")
         subprocess.run([ values["data"] + "FM2Kunlock.exe" ])
         shutil.copyfile("sprite_sound_ripper.exe", values["data"] + "sprite_sound_ripper.exe")
 
-        folder = "apps/wiilove/data/" + values["button"] + " Button/"
+        folder = "Output/" + values["data"].split("/")[-2] + "/"
         if (os.path.isdir(folder) == True):
             shutil.rmtree(folder)
         os.mkdir(folder)
@@ -49,10 +42,6 @@ while True:
         os.mkdir(folder + "Basic/")
         os.mkdir(folder + "Basic/Images")
         os.mkdir(folder + "Basic/Sounds")
-
-        nameFile = open(folder + "name.txt", "wt")
-        nameFile.write(values["data"].split("/")[-2])
-        nameFile.close()
 
         for root, dirs, files in os.walk(values["data"]):
             for file in files:
@@ -104,7 +93,10 @@ while True:
                                 shutil.copyfile(file[0:-5] + "/snd/" + thing, folder + "Demos/" + file[0:-5] + "/Sounds/" + thing)
                     shutil.rmtree(file[0:-5])
                     unpack.unpack(os.path.join(root, file), folder + "Demos/" + file[0:-5] + "/", "demo")
-                elif (file.endswith(".kgt") == True):
+
+        for root, dirs, files in os.walk(values["data"]):
+            for file in files:
+                if (file.endswith(".kgt") == True):
                     subprocess.run([ "sprite_sound_ripper.exe", file ], cwd = values["data"])
                     for r, d, f in os.walk(file[0:-4]):
                         for thing in f:
@@ -114,13 +106,6 @@ while True:
                                 shutil.copyfile(file[0:-4] + "/snd/" + thing, folder + "Basic/Sounds/" + thing)
                     shutil.rmtree(file[0:-4])
                     unpack.unpack(os.path.join(root, file), folder + "Basic/", "basic")                  
-
-        if (os.path.isdir(values["root"] + "apps/wiilove/") == False):
-            shutil.copytree("apps/wiilove/", values["root"] + "apps/wiilove/")
-        else:
-            if (os.path.isdir(values["root"] + folder) == True):
-                shutil.rmtree(values["root"] + folder)
-            shutil.copytree(folder, values["root"] + folder)
         psg.popup("Finished!")
         break
 
